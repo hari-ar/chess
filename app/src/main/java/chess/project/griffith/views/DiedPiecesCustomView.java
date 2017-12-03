@@ -1,4 +1,4 @@
-package chess.project.griffith.chess;
+package chess.project.griffith.views;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

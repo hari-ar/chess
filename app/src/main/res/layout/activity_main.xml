@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="chess.project.griffith.chess.MainActivity">
+    tools:context="chess.project.griffith.activities.MainActivity">
 
 
 
@@ -20,13 +20,13 @@
             android:textSize="20sp" />
 
 
-    <chess.project.griffith.chess.ChessBoardCustomView
+    <chess.project.griffith.views.ChessBoardCustomView
         android:id="@+id/chessBoardView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:padding="25dp" />
-    <chess.project.griffith.chess.DiedPiecesCustomView
+    <chess.project.griffith.views.DiedPiecesCustomView
         android:layout_width="match_parent"
         android:text="sd"
         android:layout_height="50dp" />

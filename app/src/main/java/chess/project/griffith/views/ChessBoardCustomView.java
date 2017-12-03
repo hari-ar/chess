@@ -1,4 +1,4 @@
-package chess.project.griffith.chess;
+package chess.project.griffith.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,6 +9,10 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+
+import chess.project.griffith.objects.Board;
+import chess.project.griffith.chess.R;
+import chess.project.griffith.objects.ChessSquare;
 
 /**
  * Created by aahuyarakshakaharil on 02/12/17.
@@ -22,6 +26,17 @@ public class ChessBoardCustomView extends View {
     private RectF square;
     private Rect bounds;
     private float borderOffset = 3f;
+    private Board board;
+
+    public ChessSquare[][] getChessBoardSquares() {
+        return chessBoardSquares;
+    }
+
+    public void setChessBoardSquares(ChessSquare[][] chessBoardSquares) {
+        this.chessBoardSquares = chessBoardSquares;
+    }
+
+    ChessSquare[][] chessBoardSquares;
 
     public ChessBoardCustomView(Context context) {
         super(context);
@@ -93,14 +108,15 @@ public class ChessBoardCustomView extends View {
 
                     if((row+col)%2==0) //Draw black rectangle for covered cells.
                     {
-                        canvas.drawRect(square, black); //Render Rectangles
-                        Drawable d = getResources().getDrawable(R.drawable.wq);
-                        d.setBounds(bounds);
-                        d.draw(canvas);
-                        //canvas.drawBitmap();
+                        canvas.drawRect(square, white); //Render Rectangles
                     }
                     else{ //To draw text
-                        canvas.drawRect(square, white); //Render Rectangles//drawTextInsideTheCell(row, col); //Print the data
+                        canvas.drawRect(square, black); //Render Rectangles//drawTextInsideTheCell(row, col); //Print the data
+                    }
+                    if(chessBoardSquares[row][col]!= null){
+                        Drawable drawable = chessBoardSquares[row][col].getPiece().getDrawable();
+                        drawable.setBounds(bounds);
+                        drawable.draw(canvas);
                     }
 
                 canvas.restore();
