@@ -22,15 +22,7 @@ public class WhiteKnight extends Knight {
         isWhitePiece = true;
     }
 
-    @Override
-    public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
-        return null;
-    }
 
-    @Override
-    public Point getCurrentPosition() {
-        return currentPosition;
-    }
 
     @Override
     public String getPieceId() {

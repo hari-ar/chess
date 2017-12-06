@@ -24,11 +24,6 @@ public class BlackRook extends Rook {
     }
 
     @Override
-    public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
-        return null;
-    }
-
-    @Override
     public Point getCurrentPosition() {
         return currentPosition;
     }

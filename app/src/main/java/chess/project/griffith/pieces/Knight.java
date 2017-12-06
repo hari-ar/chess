@@ -14,29 +14,57 @@ import chess.project.griffith.objects.ChessSquare;
 
 public abstract class Knight extends Piece {
     boolean isAlive = true;
-    final String pieceId = "bn";
     Context context;
-    Point currentPosition = null;
 
     public Knight(Context context, Point point) {
         this.context = context;
-        this.currentPosition = point;
+        currentPosition = point;
     }
 
     @Override
     public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
-        return null;
+        ArrayList<Point> allValidPositions = new ArrayList<>();
+        int x = currentPosition.x;
+        int y = currentPosition.y;
+        for(int i=0;i<8;i++){
+            for(int j=0;j<8;j++){
+                if(Math.abs(x-i)==2 && Math.abs(y-j)==1){
+                    if(chessBoardSquares[i][j].isEmpty())
+                        allValidPositions.add(new Point(i,j));
+                    else{
+                        if(!isWhitePiece && chessBoardSquares[i][j].getPiece().isWhitePiece) //Adds highlight of white pieces for black knight
+                        {
+                            allValidPositions.add(new Point(i,j));
+                        }
+                        if(isWhitePiece && !chessBoardSquares[i][j].getPiece().isWhitePiece) //Adds highlight of white pieces for black knight
+                        {
+                            allValidPositions.add(new Point(i,j));
+                        }
+                    }
+                }
+                if(Math.abs(x-i)==1 && Math.abs(y-j)==2){
+                    if(chessBoardSquares[i][j].isEmpty())
+                        allValidPositions.add(new Point(i,j));
+                    else{
+                        if(!isWhitePiece && chessBoardSquares[i][j].getPiece().isWhitePiece) //Adds highlight of white pieces for black knight
+                        {
+                            allValidPositions.add(new Point(i,j));
+                        }
+                        if(isWhitePiece && !chessBoardSquares[i][j].getPiece().isWhitePiece) //Adds highlight of white pieces for black knight
+                        {
+                            allValidPositions.add(new Point(i,j));
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+        return allValidPositions;
     }
 
-    @Override
-    public Point getCurrentPosition() {
-        return currentPosition;
-    }
-
-    @Override
-    public String getPieceId() {
-        return pieceId;
-    }
 
     @Override
     abstract public Drawable getDrawable();

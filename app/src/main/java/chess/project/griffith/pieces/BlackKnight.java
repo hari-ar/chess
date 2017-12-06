@@ -22,10 +22,6 @@ public class BlackKnight extends Knight {
         isWhitePiece = false;
     }
 
-    @Override
-    public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
-        return null;
-    }
 
     @Override
     public Point getCurrentPosition() {

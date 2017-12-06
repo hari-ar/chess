@@ -22,13 +22,6 @@ public class BlackQueen extends Queen {
         isWhitePiece = false;
     }
 
-
-
-    @Override
-    public Point getCurrentPosition() {
-        return currentPosition;
-    }
-
     @Override
     public String getPieceId() {
         return pieceId;

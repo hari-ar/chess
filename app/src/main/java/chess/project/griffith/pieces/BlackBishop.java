@@ -25,11 +25,6 @@ public class BlackBishop extends Bishop {
 
 
     @Override
-    public Point getCurrentPosition() {
-        return currentPosition;
-    }
-
-    @Override
     public String getPieceId() {
         return pieceId;
     }
