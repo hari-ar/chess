@@ -21,12 +21,6 @@ public class WhitePawn extends Piece {
 
 
 
-    public void setCurrentPosition(Point currentPosition) {
-        this.currentPosition = currentPosition;
-    }
-
-    Point currentPosition = null;
-
 
     public WhitePawn(Context context, Point point) {
         this.context = context;
@@ -43,9 +37,11 @@ public class WhitePawn extends Piece {
         {
             if( currentPosition.y == 6){
                 if(chessBoardSquares[0][5].getPiece()==null)
-                listOfValidPoints.add(new Point(0,5));//Progressing Ahead
-                if(chessBoardSquares[0][4].getPiece()==null)
-                listOfValidPoints.add(new Point(0,4)); // Two Steps ahead
+                {
+                    listOfValidPoints.add(new Point(0,5));//Progressing Ahead
+                    if(chessBoardSquares[0][4].getPiece()==null)
+                        listOfValidPoints.add(new Point(0,4)); // Two Steps ahead
+                }
                 if(chessBoardSquares[1][5].getPiece()!=null && !chessBoardSquares[1][5].getPiece().isWhitePiece())
                     listOfValidPoints.add(new Point(1,5)); // Crossing Opponent
             }
@@ -59,9 +55,11 @@ public class WhitePawn extends Piece {
         else if(currentPosition.x ==7){ //Right Most Pawn
             if( currentPosition.y == 6){
                 if(chessBoardSquares[7][5].getPiece()==null)
-                listOfValidPoints.add(new Point(7,5));//Progressing Ahead
-                if(chessBoardSquares[7][4].getPiece()==null)
-                listOfValidPoints.add(new Point(7,4)); // Two Steps ahead
+                {
+                    listOfValidPoints.add(new Point(7,5));//Progressing Ahead
+                    if(chessBoardSquares[7][4].getPiece()==null)
+                        listOfValidPoints.add(new Point(7,4)); // Two Steps ahead
+                }
                 if(chessBoardSquares[6][5].getPiece()!=null && !chessBoardSquares[6][5].getPiece().isWhitePiece())
                     listOfValidPoints.add(new Point(6,5)); // Crossing Opponent
             }
@@ -76,9 +74,11 @@ public class WhitePawn extends Piece {
         else {
             if( currentPosition.y == 6){ //Two Steps
                 if(chessBoardSquares[currentPosition.x][5].getPiece()==null)
-                listOfValidPoints.add(new Point(currentPosition.x,5));//Progressing Ahead
-                if(chessBoardSquares[currentPosition.x][4].getPiece()==null)
-                listOfValidPoints.add(new Point(currentPosition.x,4)); // Two Steps ahead
+                {
+                    listOfValidPoints.add(new Point(currentPosition.x,5));//Progressing Ahead
+                    if(chessBoardSquares[currentPosition.x][4].getPiece()==null)
+                        listOfValidPoints.add(new Point(currentPosition.x,4)); // Two Steps ahead
+                }
                 if(chessBoardSquares[currentPosition.x+1][5].getPiece()!=null && !chessBoardSquares[currentPosition.x+1][5].getPiece().isWhitePiece())
                     listOfValidPoints.add(new Point(currentPosition.x+1,currentPosition.y-1));
                 if(chessBoardSquares[currentPosition.x-1][currentPosition.y-1].getPiece()!=null && !chessBoardSquares[currentPosition.x-1][currentPosition.y-1].getPiece().isWhitePiece())
@@ -96,10 +96,6 @@ public class WhitePawn extends Piece {
        return listOfValidPoints;
     }
 
-    @Override
-    public Point getCurrentPosition() {
-        return currentPosition;
-    }
 
     @Override
     public String getPieceId() {

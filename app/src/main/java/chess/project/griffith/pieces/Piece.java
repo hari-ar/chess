@@ -15,14 +15,20 @@ import chess.project.griffith.objects.ChessSquare;
 public abstract class Piece {
 
     public abstract ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares);
-    public abstract  Point getCurrentPosition();
     public abstract  String getPieceId();
     public abstract  Drawable getDrawable();
     public abstract  boolean isAlive();
     boolean isWhitePiece;
+    Point currentPosition;
+
+
+    public Point getCurrentPosition() {
+        return currentPosition;
+    }
 
     public void setCurrentPosition(Point currentPosition) {
         this.currentPosition = currentPosition;
+
     }
 
     public ArrayList<Point> filterInvalidPositions(final ChessSquare[][] chessBoardSquares, ArrayList<Point> allPoints, final Piece selectedPiece){
@@ -55,7 +61,9 @@ public abstract class Piece {
     }
 
 
-    Point currentPosition;
+
+
+
 
     public boolean isWhitePiece() {
         return isWhitePiece;

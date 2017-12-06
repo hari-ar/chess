@@ -15,13 +15,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import chess.project.griffith.activities.MainActivity;
 import chess.project.griffith.objects.Board;
 import chess.project.griffith.chess.R;
 import chess.project.griffith.objects.ChessSquare;
-import chess.project.griffith.pieces.BlackPawn;
 import chess.project.griffith.pieces.Piece;
-import chess.project.griffith.pieces.WhitePawn;
+
 
 /**
  * Created by aahuyarakshakaharil on 02/12/17.
@@ -211,12 +209,22 @@ public class ChessBoardCustomView extends View {
     private void checkForValidPieceAndUnHighlight() {
         if(chessBoardSquares[rowDown][columnDown].getPiece()!=null)
         {
-            if(chessBoardSquares[rowDown][columnDown].isHighlighted()) //Avoid unhighlighting is clicked on other pieces
+            if(!isTouchDownOnOpponentPiece() && chessBoardSquares[rowDown][columnDown].isHighlighted()) //Avoid unhighlighting is clicked on other pieces
             {
                 unhighlightSquares();
                 isHighlightedMode = false;
             }
         }
+    }
+
+    private boolean isTouchDownOnOpponentPiece() {
+        if(chessBoardSquares[rowDown][columnDown].getPiece().isWhitePiece() && isWhiteTurn){
+            return false;
+        }
+        else if (!chessBoardSquares[rowDown][columnDown].getPiece().isWhitePiece() && !isWhiteTurn){
+            return false;
+        }
+        return true;
     }
 
     private boolean isValidPieceForCurrentTurn(){
