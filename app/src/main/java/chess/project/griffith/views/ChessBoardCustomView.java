@@ -3,16 +3,25 @@ package chess.project.griffith.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import chess.project.griffith.activities.MainActivity;
 import chess.project.griffith.objects.Board;
 import chess.project.griffith.chess.R;
 import chess.project.griffith.objects.ChessSquare;
+import chess.project.griffith.pieces.BlackPawn;
+import chess.project.griffith.pieces.Piece;
+import chess.project.griffith.pieces.WhitePawn;
 
 /**
  * Created by aahuyarakshakaharil on 02/12/17.
@@ -20,13 +29,18 @@ import chess.project.griffith.objects.ChessSquare;
 
 public class ChessBoardCustomView extends View {
 
-    private Paint white, black;
+    private Paint white, black, yellow;
     private float multiplier;
     private Canvas canvas;
     private RectF square;
-    private Rect bounds;
+    private Rect bounds, highlightBounds;
     private float borderOffset = 3f;
+    private float highlightOffset = 5f;
     private Board board;
+    int rowDown =-1, columnDown =-1, rowUp =-1,columnUp =-1;
+    boolean isWhiteTurn = true;
+    boolean isHighlightedMode = false;
+    Point selectedPiecePosition = null;
 
     public ChessSquare[][] getChessBoardSquares() {
         return chessBoardSquares;
@@ -58,9 +72,11 @@ public class ChessBoardCustomView extends View {
     private void init() {
         black = new Paint();
         white = new Paint();
+        yellow = new Paint();
         //Assigning color values.
         black.setColor(getResources().getColor(R.color.black));
         white.setColor(getResources().getColor(R.color.white));
+        yellow.setColor(getResources().getColor(R.color.yellow));
         //Setting Anti Aliasing Flags..!!
         white.setAntiAlias(true);
         black.setAntiAlias(true);
@@ -93,6 +109,12 @@ public class ChessBoardCustomView extends View {
             int right = (int) (multiplier/2 - borderOffset);
             int bottom = (int) (multiplier/2- borderOffset);
             bounds = new Rect(left, top, right , bottom);
+
+            left = (int) (highlightOffset -multiplier/2);
+            top = (int) (highlightOffset - multiplier/2);
+            right = (int) (multiplier/2 - highlightOffset);
+            bottom = (int) (multiplier/2- highlightOffset);
+            highlightBounds = new Rect(left, top, right , bottom);
         }
 
         drawGameBoard(); // Draw Background
@@ -113,7 +135,12 @@ public class ChessBoardCustomView extends View {
                     else{ //To draw text
                         canvas.drawRect(square, black); //Render Rectangles//drawTextInsideTheCell(row, col); //Print the data
                     }
-                    if(chessBoardSquares[row][col]!= null){
+                    if(chessBoardSquares[row][col].isHighlighted()){
+
+                        canvas.drawRect(highlightBounds, yellow); //Render Rectangles
+                    }
+
+                    if(chessBoardSquares[row][col].getPiece()!= null){
                         Drawable drawable = chessBoardSquares[row][col].getPiece().getDrawable();
                         drawable.setBounds(bounds);
                         drawable.draw(canvas);
@@ -135,5 +162,131 @@ public class ChessBoardCustomView extends View {
             setMeasuredDimension((int) width, (int) width); // Responsible for rendering square mines.
         }
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if(event.getActionMasked() == MotionEvent.ACTION_DOWN) { //Get touch down co-ordinates
+            float x = event.getX();
+            float y = event.getY();
+            System.out.println("x is "+x+" and y is "+y);
+            //Convert user touch co-ordinates to out cell map
+            rowDown = (int) (x / multiplier);
+            columnDown = (int) (y / multiplier);
+            return true;
+        }
+        if(event.getActionMasked() == MotionEvent.ACTION_UP) {//Get touch up co-ordinates
+            float x = event.getX();
+            float y = event.getY();
+            //Convert user touch co-ordinates to out cell map
+            rowUp = (int) (x / multiplier);
+            columnUp = (int) (y / multiplier);
+            System.out.println(rowUp+","+columnUp);
+        }
+
+        if(rowDown == rowUp && columnDown==columnUp) {
+            if(chessBoardSquares[rowDown][columnDown].getPiece() != null){
+                Piece currentPiece = chessBoardSquares[rowDown][columnDown].getPiece();
+                if(!isHighlightedMode){
+                    if(isWhiteTurn && currentPiece.isWhitePiece())
+                    {
+                        selectedPiecePosition = new Point(rowUp,columnUp);
+
+                        ArrayList<Point> allPossibleMoves = currentPiece.getAllValidPositions(chessBoardSquares);
+                            for(int i=0;i<allPossibleMoves.size();i++){
+                                Point point = allPossibleMoves.get(i);
+                                chessBoardSquares[point.x][point.y].setHighlighted(true);
+                                isHighlightedMode = true;
+                            }
+                            chessBoardSquares[rowDown][columnDown].setHighlighted(true);
+
+                    }
+                    else if(!isWhiteTurn && !currentPiece.isWhitePiece()){
+
+                        selectedPiecePosition = new Point(rowUp,columnUp);
+                        ArrayList<Point> allPossibleMoves = currentPiece.getAllValidPositions(chessBoardSquares);
+                            for(int i=0;i<allPossibleMoves.size();i++){
+                                Point point = allPossibleMoves.get(i);
+                                chessBoardSquares[point.x][point.y].setHighlighted(true);
+                                isHighlightedMode = true;
+                            }
+                            chessBoardSquares[rowDown][columnDown].setHighlighted(true);
+
+                    }
+                    else{
+                        Toast.makeText(getContext(),"Please select your piece",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    if(!(selectedPiecePosition.x == rowUp && selectedPiecePosition.y == columnUp)){
+                        if(chessBoardSquares[rowUp][columnUp].isHighlighted()){
+                            Piece piece = chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece();
+                            piece.setCurrentPosition(new Point(rowUp,columnUp));
+                            chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].setPiece(null);
+                            chessBoardSquares[rowUp][columnUp].setPiece(piece);
+                            unhighlightChangeModeAndTurn();
+                        }
+                    }
+                    else
+                        unhighlightSquares();
+                }
+            }
+            else {
+                if((selectedPiecePosition.x != rowUp || selectedPiecePosition.y != columnUp) || chessBoardSquares[rowUp][columnUp].isHighlighted()){
+                        Piece piece = chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece();
+                        piece.setCurrentPosition(new Point(rowUp,columnUp));
+                        chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].setPiece(null);
+                        chessBoardSquares[rowUp][columnUp].setPiece(piece);
+                        unhighlightChangeModeAndTurn();
+                }
+                else
+                    unhighlightSquares();
+            }
+        }
+        invalidate();
+        return super.onTouchEvent(event);
+    }
+
+    private void unhighlightChangeModeAndTurn() {
+        for (int x = 0; x<8 ; x++){ //Loop for pawns
+            for(int y = 0; y<8 ; y++) {
+                chessBoardSquares[x][y].setHighlighted(false);
+                isHighlightedMode=false;
+            }
+        }
+        isWhiteTurn=!isWhiteTurn;
+    }
+
+    private void unhighlightSquares() {
+        for (int x = 0; x<8 ; x++){ //Loop for pawns
+            for(int y = 0; y<8 ; y++) {
+                chessBoardSquares[x][y].setHighlighted(false);
+                //isWhiteTurn=!isWhiteTurn;
+                isHighlightedMode=false;
+            }
+        }
+    }
+
+    private boolean canBeMoved() {
+        return true;
+    }
+
+    private boolean isSelfKingInCheckOnPieceRemoved(ChessSquare[][] boardWithoutCurrentPiece){
+        for(int x = 0; x<8 ; x++){
+            for (int y = 0; y<8 ; y++){
+                if(isWhiteTurn){
+                    //boardWithoutCurrentPiece
+                }
+                else
+                    {
+
+                }
+            }
+        }
+
+
+
+
+        return true;
     }
 }

@@ -7,8 +7,35 @@ import chess.project.griffith.pieces.Piece;
  */
 
 public class ChessSquare {
+
     private Piece piece;
     boolean isEmpty = true;
+    boolean isHighlighted = false;
+
+
+    public void setPiece(Piece piece) {
+        this.piece = piece;
+    }
+
+    public void setEmpty(boolean empty) {
+        isEmpty = empty;
+    }
+
+    public void setHighlighted(boolean highlighted) {
+        isHighlighted = highlighted;
+    }
+
+
+
+    public boolean isEmpty() {
+        return isEmpty;
+    }
+
+    public boolean isHighlighted() {
+        return isHighlighted;
+    }
+
+
 
     public Piece getPiece() {
         return piece;

@@ -4,30 +4,31 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 
+import java.util.ArrayList;
+
 import chess.project.griffith.chess.R;
+import chess.project.griffith.objects.ChessSquare;
 
 /**
  * Created by aahuyarakshakaharil on 03/12/17.
  */
 
-public class WhiteRook implements Piece {
+public class WhiteRook extends Rook {
     boolean isAlive = true;
-    final String pieceId = "wr";
-    Context context;
-    Point currentPosition = null;
+
 
     public WhiteRook(Context context, Point point) {
-        this.context = context;
-        this.currentPosition = point;
+        super(context, point);
+        isWhitePiece = true;
     }
 
     @Override
-    public boolean isValidMove(Point toPoint) {
-        return false;
+    public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
+        return null;
     }
 
     @Override
-    public Point getcurrentPosition() {
+    public Point getCurrentPosition() {
         return currentPosition;
     }
 

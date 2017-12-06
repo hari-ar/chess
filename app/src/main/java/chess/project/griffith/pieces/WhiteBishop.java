@@ -4,32 +4,30 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 
+import java.util.ArrayList;
+
 import chess.project.griffith.chess.R;
+import chess.project.griffith.objects.ChessSquare;
 
 /**
  * Created by aahuyarakshakaharil on 03/12/17.
  */
 
-public class WhiteBishop implements Piece {
+public class WhiteBishop extends Bishop {
     boolean isAlive = true;
     final String pieceId = "wb";
-    Context context;
-    Point currentPosition = null;
+
 
     public WhiteBishop(Context context, Point point) {
-        this.context = context;
-        this.currentPosition = point;
+        super(context,point);
+        isWhitePiece= true;
     }
 
     @Override
-    public boolean isValidMove(Point toPoint) {
-        return false;
+    public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
+        return null;
     }
 
-    @Override
-    public Point getcurrentPosition() {
-        return currentPosition;
-    }
 
     @Override
     public String getPieceId() {

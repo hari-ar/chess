@@ -4,30 +4,28 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 
+import java.util.ArrayList;
+
 import chess.project.griffith.chess.R;
 
 /**
  * Created by aahuyarakshakaharil on 03/12/17.
  */
 
-public class BlackQueen implements Piece {
+public class BlackQueen extends Queen {
     boolean isAlive = true;
     final String pieceId = "bq";
-    Context context;
-    Point currentPosition = null;
+
 
     public BlackQueen(Context context, Point point) {
-        this.context = context;
-        this.currentPosition = point;
+        super(context,point);
+        isWhitePiece = false;
     }
 
-    @Override
-    public boolean isValidMove(Point toPoint) {
-        return false;
-    }
+
 
     @Override
-    public Point getcurrentPosition() {
+    public Point getCurrentPosition() {
         return currentPosition;
     }
 

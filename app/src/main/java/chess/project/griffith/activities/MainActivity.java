@@ -37,8 +37,11 @@ public class MainActivity extends AppCompatActivity {
         ChessBoardCustomView chessBoardCustomView = findViewById(R.id.chessBoardView);
         //Pawn
         for (int x = 0; x<8 ; x++){ //Loop for pawns
-            chessBoardSquares[x][6] = new ChessSquare(new WhitePawn(getBaseContext(),new Point(x,6)));
-            chessBoardSquares[x][1] = new ChessSquare(new BlackPawn(getBaseContext(),new Point(x,1)));
+            for(int y = 0; y<8 ; y++) {
+                chessBoardSquares[x][y] = new ChessSquare(null);
+                chessBoardSquares[x][6] = new ChessSquare(new WhitePawn(getBaseContext(), new Point(x, 6)));
+                chessBoardSquares[x][1] = new ChessSquare(new BlackPawn(getBaseContext(), new Point(x, 1)));
+            }
         }
         //Bishops
         chessBoardSquares[2][0] = new ChessSquare(new BlackBishop(getBaseContext(),new Point(2,0)));
