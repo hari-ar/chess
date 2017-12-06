@@ -41,6 +41,8 @@ public class ChessBoardCustomView extends View {
     boolean isWhiteTurn = true;
     boolean isHighlightedMode = false;
     Point selectedPiecePosition = null;
+    long touchDownTime = 0;
+    long touchUpTime = 0;
 
     public ChessSquare[][] getChessBoardSquares() {
         return chessBoardSquares;
@@ -167,84 +169,59 @@ public class ChessBoardCustomView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if(event.getActionMasked() == MotionEvent.ACTION_DOWN) { //Get touch down co-ordinates
-            float x = event.getX();
-            float y = event.getY();
-            System.out.println("x is "+x+" and y is "+y);
-            //Convert user touch co-ordinates to out cell map
-            rowDown = (int) (x / multiplier);
-            columnDown = (int) (y / multiplier);
+            float x = event.getX(); float y = event.getY();
+            touchDownTime = System.currentTimeMillis();
+            rowDown = (int) (x / multiplier);columnDown = (int) (y / multiplier);
+            System.out.println("Touch down x is "+rowDown+" and y is "+columnDown);
+            if(isHighlightedMode) //Reset the suggestions..!!
+            {
+                checkForValidPieceAndUnHighlight();
+            }
+            else{
+                if(chessBoardSquares[rowDown][columnDown].getPiece()!=null){
+                    setHighlightForMoves();
+                }
+            }
+
             return true;
         }
         if(event.getActionMasked() == MotionEvent.ACTION_UP) {//Get touch up co-ordinates
             float x = event.getX();
             float y = event.getY();
+
             //Convert user touch co-ordinates to out cell map
             rowUp = (int) (x / multiplier);
             columnUp = (int) (y / multiplier);
-            System.out.println(rowUp+","+columnUp);
-        }
-
-        if(rowDown == rowUp && columnDown==columnUp) {
-            if(chessBoardSquares[rowDown][columnDown].getPiece() != null){
-                Piece currentPiece = chessBoardSquares[rowDown][columnDown].getPiece();
-                if(!isHighlightedMode){
-                    if(isWhiteTurn && currentPiece.isWhitePiece())
-                    {
-                        selectedPiecePosition = new Point(rowUp,columnUp);
-
-                        ArrayList<Point> allPossibleMoves = currentPiece.getAllValidPositions(chessBoardSquares);
-                            for(int i=0;i<allPossibleMoves.size();i++){
-                                Point point = allPossibleMoves.get(i);
-                                chessBoardSquares[point.x][point.y].setHighlighted(true);
-                                isHighlightedMode = true;
-                            }
-                            chessBoardSquares[rowDown][columnDown].setHighlighted(true);
-
-                    }
-                    else if(!isWhiteTurn && !currentPiece.isWhitePiece()){
-
-                        selectedPiecePosition = new Point(rowUp,columnUp);
-                        ArrayList<Point> allPossibleMoves = currentPiece.getAllValidPositions(chessBoardSquares);
-                            for(int i=0;i<allPossibleMoves.size();i++){
-                                Point point = allPossibleMoves.get(i);
-                                chessBoardSquares[point.x][point.y].setHighlighted(true);
-                                isHighlightedMode = true;
-                            }
-                            chessBoardSquares[rowDown][columnDown].setHighlighted(true);
-
-                    }
-                    else{
-                        Toast.makeText(getContext(),"Please select your piece",Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else {
-                    if(!(selectedPiecePosition.x == rowUp && selectedPiecePosition.y == columnUp)){
-                        if(chessBoardSquares[rowUp][columnUp].isHighlighted()){
-                            Piece piece = chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece();
-                            piece.setCurrentPosition(new Point(rowUp,columnUp));
-                            chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].setPiece(null);
-                            chessBoardSquares[rowUp][columnUp].setPiece(piece);
-                            unhighlightChangeModeAndTurn();
-                        }
-                    }
-                    else
-                        unhighlightSquares();
-                }
-            }
-            else {
-                if((selectedPiecePosition.x != rowUp || selectedPiecePosition.y != columnUp) || chessBoardSquares[rowUp][columnUp].isHighlighted()){
-                        Piece piece = chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece();
-                        piece.setCurrentPosition(new Point(rowUp,columnUp));
-                        chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].setPiece(null);
-                        chessBoardSquares[rowUp][columnUp].setPiece(piece);
-                        unhighlightChangeModeAndTurn();
-                }
-                else
-                    unhighlightSquares();
+            System.out.println("Touch up x is "+rowUp+" and y is "+columnUp);
+            if(chessBoardSquares[rowUp][columnUp].isHighlighted()){
+                moveSelectedPieceToTouchUp();
             }
         }
+
         invalidate();
         return super.onTouchEvent(event);
+    }
+
+    private void checkForValidPieceAndUnHighlight() {
+        if(chessBoardSquares[rowDown][columnDown].getPiece()!=null)
+        {
+            if(chessBoardSquares[rowDown][columnDown].isHighlighted()) //Avoid unhighlighting is clicked on other pieces
+            {
+                unhighlightSquares();
+                isHighlightedMode = false;
+            }
+        }
+    }
+
+    private void moveSelectedPieceToTouchUp() {
+        if(selectedPiecePosition.x !=rowUp || selectedPiecePosition.y !=columnUp)
+        {
+        Piece piece = chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece();
+        piece.setCurrentPosition(new Point(rowUp,columnUp));
+        chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].setPiece(null);
+        chessBoardSquares[rowUp][columnUp].setPiece(piece);
+        unhighlightChangeModeAndTurn();
+        }
     }
 
     private void unhighlightChangeModeAndTurn() {
@@ -257,6 +234,21 @@ public class ChessBoardCustomView extends View {
         isWhiteTurn=!isWhiteTurn;
     }
 
+    private void setHighlightForMoves(){
+        selectedPiecePosition = new Point(rowDown,columnDown);
+        Piece currentPiece = chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece();
+        ArrayList<Point> allPossibleMoves = currentPiece.getAllValidPositions(chessBoardSquares);
+        for(int i=0;i<allPossibleMoves.size();i++){
+            Point point = allPossibleMoves.get(i);
+            chessBoardSquares[point.x][point.y].setHighlighted(true);
+            isHighlightedMode = true;
+        }
+        chessBoardSquares[rowDown][columnDown].setHighlighted(true);
+        isHighlightedMode = true;
+        invalidate();
+    }
+
+
     private void unhighlightSquares() {
         for (int x = 0; x<8 ; x++){ //Loop for pawns
             for(int y = 0; y<8 ; y++) {
@@ -267,26 +259,5 @@ public class ChessBoardCustomView extends View {
         }
     }
 
-    private boolean canBeMoved() {
-        return true;
-    }
 
-    private boolean isSelfKingInCheckOnPieceRemoved(ChessSquare[][] boardWithoutCurrentPiece){
-        for(int x = 0; x<8 ; x++){
-            for (int y = 0; y<8 ; y++){
-                if(isWhiteTurn){
-                    //boardWithoutCurrentPiece
-                }
-                else
-                    {
-
-                }
-            }
-        }
-
-
-
-
-        return true;
-    }
 }

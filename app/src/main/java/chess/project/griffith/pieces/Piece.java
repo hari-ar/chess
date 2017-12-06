@@ -20,7 +20,6 @@ public abstract class Piece {
     public abstract  Drawable getDrawable();
     public abstract  boolean isAlive();
     boolean isWhitePiece;
-    boolean isWhiteTurn;
 
     public void setCurrentPosition(Point currentPosition) {
         this.currentPosition = currentPosition;

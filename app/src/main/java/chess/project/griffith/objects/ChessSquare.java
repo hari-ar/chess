@@ -9,12 +9,21 @@ import chess.project.griffith.pieces.Piece;
 public class ChessSquare {
 
     private Piece piece;
-    boolean isEmpty = true;
-    boolean isHighlighted = false;
+    private boolean isEmpty = true;
+    private boolean isHighlighted = false;
 
 
     public void setPiece(Piece piece) {
-        this.piece = piece;
+        if(piece == null)
+        {
+            this.piece = null;
+            setEmpty(true);
+        }
+        else{
+            this.piece = piece;
+            setEmpty(false);
+        }
+
     }
 
     public void setEmpty(boolean empty) {

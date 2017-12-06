@@ -27,7 +27,6 @@ public class BlackPawn extends Piece {
 
     @Override
     public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
-        isWhiteTurn = false;
         System.out.println("Black Pawn");
         ArrayList<Point> listOfValidPoints = new ArrayList<>();
         if(currentPosition.x == 0 ) //Left most file a-pawn
