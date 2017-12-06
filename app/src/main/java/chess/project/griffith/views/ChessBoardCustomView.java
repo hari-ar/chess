@@ -179,10 +179,15 @@ public class ChessBoardCustomView extends View {
             }
             else{
                 if(chessBoardSquares[rowDown][columnDown].getPiece()!=null){
-                    setHighlightForMoves();
+                    if(isValidPieceForCurrentTurn())
+                        setHighlightForMoves();
+                    else
+                    {
+                        Toast.makeText(getContext(),"Please select your piece",Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
                 }
             }
-
             return true;
         }
         if(event.getActionMasked() == MotionEvent.ACTION_UP) {//Get touch up co-ordinates
@@ -193,6 +198,7 @@ public class ChessBoardCustomView extends View {
             rowUp = (int) (x / multiplier);
             columnUp = (int) (y / multiplier);
             System.out.println("Touch up x is "+rowUp+" and y is "+columnUp);
+            //Used to move piece in swipes and tocuh up events
             if(chessBoardSquares[rowUp][columnUp].isHighlighted()){
                 moveSelectedPieceToTouchUp();
             }
@@ -211,6 +217,20 @@ public class ChessBoardCustomView extends View {
                 isHighlightedMode = false;
             }
         }
+    }
+
+    private boolean isValidPieceForCurrentTurn(){
+        if(chessBoardSquares[rowDown][columnDown].getPiece()!=null){
+            if(chessBoardSquares[rowDown][columnDown].getPiece().isWhitePiece() && isWhiteTurn)
+            {
+                return true;
+            }
+            else if ((!chessBoardSquares[rowDown][columnDown].getPiece().isWhitePiece()) && !isWhiteTurn)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void moveSelectedPieceToTouchUp() {
