@@ -4,7 +4,6 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import chess.project.griffith.objects.ChessSquare;
 
@@ -14,15 +13,15 @@ import chess.project.griffith.objects.ChessSquare;
 
 public abstract class Piece {
 
+
+
     public abstract ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares);
+    public abstract ArrayList<Point> getAllPossiblePositions(ChessSquare[][] chessBoardSquares);
     public abstract  Drawable getDrawable();
     boolean isWhitePiece;
+    String pieceId;
     Point currentPosition;
 
-
-    public Point getCurrentPosition() {
-        return currentPosition;
-    }
 
     public void setCurrentPosition(Point currentPosition) {
         this.currentPosition = currentPosition;
@@ -31,37 +30,81 @@ public abstract class Piece {
 
     public ArrayList<Point> filterInvalidPositions(final ChessSquare[][] chessBoardSquares, ArrayList<Point> allPoints, final Piece selectedPiece){
         ChessSquare[][] testBoard = new ChessSquare[8][8];
-        for(int i =0 ; i<allPoints.size() ; i++){
-         Point testPosition = allPoints.get(0);
-         for(int j=0; j<8;j++){
-             for(int k=0;k<8;k++){
-                 if((j==testPosition.x && k==testPosition.y) )
-                 {
-                     testBoard[j][k] = new ChessSquare(selectedPiece);
-                 }
-                 else if ((j==currentPosition.x && k==currentPosition.y)){
-                     testBoard[j][k] = new ChessSquare(null);
-                 }
-                 else{
-                     testBoard[j][k] = chessBoardSquares[j][k];
-                 }
-                 if(isKinginCheck(testBoard)){
 
-                 }
-             }
-         }
-     }
-     return null;
+        ArrayList<Point> verifiedValidPoints = new ArrayList();
+        for(int i =0 ; i<allPoints.size() ; i++){
+            for(int x=0; x<8;x++){
+                for(int y=0;y<8;y++){
+                    testBoard[x][y] = new ChessSquare(null);
+                    testBoard[x][y].setPiece(chessBoardSquares[x][y].getPiece());
+                }
+            }
+            Point testPosition = allPoints.get(i);
+            //if(!(currentPosition.x==testPosition.x && currentPosition.y==testPosition.y)){
+                for(int x=0; x<8;x++){
+                    for(int y=0;y<8;y++){
+                        if((x==testPosition.x && y==testPosition.y) )
+                        {
+                            testBoard[x][y] = new ChessSquare(selectedPiece);
+                        }
+                        else if ((x==currentPosition.x && y==currentPosition.y)){
+                            testBoard[x][y] = new ChessSquare(null);
+                        }
+                    }
+                }
+                        if(!isKingInCheck(testBoard, selectedPiece.isWhitePiece)){
+                            verifiedValidPoints.add(testPosition);
+                        }
+
+            }
+        //}
+        return verifiedValidPoints;
     }
 
-    private boolean isKinginCheck(ChessSquare[][] testBoard) {
+    private boolean isKingInCheck(final ChessSquare[][] testBoard, boolean isWhitePiece) {
+        Point kingPosition = getKingPositionFromBoard(testBoard);
+        for(int x = 0; x<8;x++){
+            for(int y=0;y<8;y++){
+                if(!testBoard[x][y].isEmpty()){
+                    if(isWhitePiece && !testBoard[x][y].getPiece().isWhitePiece()){
+                        ArrayList<Point> allPoints = testBoard[x][y].getPiece().getAllPossiblePositions(testBoard);
+                        for(int i=0;i<allPoints.size();i++){
+                            if(allPoints.get(i).x == kingPosition.x && allPoints.get(i).y == kingPosition.y){
+                                return true;
+                            }
+                        }
+                    }
+                    else if (!isWhitePiece && testBoard[x][y].getPiece().isWhitePiece()){
+                        ArrayList<Point> allPoints = testBoard[x][y].getPiece().getAllPossiblePositions(testBoard);
+                        for(int i=0;i<allPoints.size();i++){
+                            if(allPoints.get(i).x == kingPosition.x && allPoints.get(i).y == kingPosition.y){
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
-
-
-
-
+    private Point getKingPositionFromBoard(ChessSquare[][] testBoard) {
+        Point kingPosition = null;
+        for(int x = 0; x<8;x++){
+            for(int y=0;y<8;y++){
+                if(!testBoard[x][y].isEmpty())
+                {
+                    if(isWhitePiece && testBoard[x][y].getPiece().pieceId=="wk"){
+                        kingPosition = new Point(x,y);
+                    }
+                    else if(!isWhitePiece && testBoard[x][y].getPiece().pieceId=="bk"){
+                        kingPosition = new Point(x,y);
+                    }
+                }
+            }
+        }
+        return kingPosition;
+    }
 
     public boolean isWhitePiece() {
         return isWhitePiece;

@@ -14,17 +14,25 @@ import chess.project.griffith.objects.ChessSquare;
  */
 
 public class Queen extends Piece {
-    final String pieceId = "bq";
     Context context;
 
     public Queen(Context context, Point point, boolean isWhitePiece) {
         this.context = context;
         this.currentPosition = point;
         super.isWhitePiece = isWhitePiece;
+        if(isWhitePiece)
+            pieceId = "wq";
+        else
+            pieceId = "bq";
     }
 
     @Override
     public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
+        return super.filterInvalidPositions(chessBoardSquares,getAllPossiblePositions(chessBoardSquares),this);
+    }
+
+    @Override
+    public ArrayList<Point> getAllPossiblePositions(ChessSquare[][] chessBoardSquares) {
         ArrayList<Point> allValidPositions = new ArrayList<>();
         int x = currentPosition.x;
         int y = currentPosition.y;
@@ -186,11 +194,6 @@ public class Queen extends Piece {
             }
         }
         return allValidPositions;
-    }
-
-    @Override
-    public Point getCurrentPosition() {
-        return currentPosition;
     }
 
 

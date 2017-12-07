@@ -21,10 +21,21 @@ public class Knight extends Piece {
         this.context = context;
         currentPosition = point;
         super.isWhitePiece = isWhitePiece;
+        if(isWhitePiece)
+            pieceId = "wn";
+        else
+            pieceId = "bn";
     }
 
     @Override
     public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
+
+
+        return super.filterInvalidPositions(chessBoardSquares,getAllPossiblePositions(chessBoardSquares),this);
+    }
+
+    @Override
+    public ArrayList<Point> getAllPossiblePositions(ChessSquare[][] chessBoardSquares) {
         ArrayList<Point> allValidPositions = new ArrayList<>();
         int x = currentPosition.x;
         int y = currentPosition.y;
@@ -60,7 +71,6 @@ public class Knight extends Piece {
                 }
             }
         }
-
         return allValidPositions;
     }
 

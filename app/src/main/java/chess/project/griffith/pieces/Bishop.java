@@ -13,7 +13,7 @@ import chess.project.griffith.objects.ChessSquare;
  * Created by aahuyarakshakaharil on 03/12/17.
  */
 
-public  class Bishop extends Piece {
+public class Bishop extends Piece {
     boolean isAlive = true;
     Context context;
 
@@ -22,10 +22,19 @@ public  class Bishop extends Piece {
         this.context = context;
         currentPosition = point;
         super.isWhitePiece = isWhitePiece;
+        if(isWhitePiece)
+            pieceId = "wb";
+        else
+            pieceId = "bb";
     }
 
     @Override
     public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
+        return super.filterInvalidPositions(chessBoardSquares,getAllPossiblePositions(chessBoardSquares),this);
+    }
+
+    @Override
+    public ArrayList<Point> getAllPossiblePositions(ChessSquare[][] chessBoardSquares) {
         ArrayList<Point> allValidPositions = new ArrayList<>();
         int x = currentPosition.x;
         int y = currentPosition.y;
@@ -45,7 +54,7 @@ public  class Bishop extends Piece {
                     {
                         allValidPositions.add(new Point(testX,testY));
                     }
-                        break;
+                    break;
                 }
             }
         }
@@ -122,17 +131,8 @@ public  class Bishop extends Piece {
         {
             return context.getResources().getDrawable(R.drawable.wb);
         }
-
         else{
             return context.getResources().getDrawable(R.drawable.bb);
         }
-
     }
-
-    @Override
-    public Point getCurrentPosition() {
-        return currentPosition;
-    }
-
-
 }

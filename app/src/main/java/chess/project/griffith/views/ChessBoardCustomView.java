@@ -36,7 +36,7 @@ public class ChessBoardCustomView extends View {
     private float highlightOffset = 5f;
     private Board board;
     int rowDown =-1, columnDown =-1, rowUp =-1,columnUp =-1;
-    boolean isWhiteTurn = true;
+    static boolean isWhiteTurn = true;
     boolean isHighlightedMode = false;
     Point selectedPiecePosition = null;
     long touchDownTime = 0;
