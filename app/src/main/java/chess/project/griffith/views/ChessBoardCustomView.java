@@ -157,9 +157,9 @@ public class ChessBoardCustomView extends View {
         float width = getMeasuredWidth();
         float height = getMeasuredHeight();
         if (height < width) {
-            setMeasuredDimension((int) height, (int) height); // Responsible for rendering square mines.
+            setMeasuredDimension((int) height, (int) height); // Responsible for rendering square board.
         } else {
-            setMeasuredDimension((int) width, (int) width); // Responsible for rendering square mines.
+            setMeasuredDimension((int) width, (int) width); // Responsible for rendering square board.
         }
 
     }
@@ -209,7 +209,7 @@ public class ChessBoardCustomView extends View {
     private void checkForValidPieceAndUnHighlight() {
         if(chessBoardSquares[rowDown][columnDown].getPiece()!=null)
         {
-            if(!isTouchDownOnOpponentPiece() && chessBoardSquares[rowDown][columnDown].isHighlighted()) //Avoid unhighlighting is clicked on other pieces
+            if(!isTouchDownOnOpponentPiece() && chessBoardSquares[rowDown][columnDown].isHighlighted()) //Avoid unhighlighting if clicked on other pieces
             {
                 unhighlightSquares();
                 isHighlightedMode = false;
