@@ -6,19 +6,21 @@ import android.graphics.drawable.Drawable;
 
 import java.util.ArrayList;
 
+import chess.project.griffith.chess.R;
 import chess.project.griffith.objects.ChessSquare;
 
 /**
  * Created by aahuyarakshakaharil on 03/12/17.
  */
 
-public abstract class Knight extends Piece {
+public class Knight extends Piece {
     boolean isAlive = true;
     Context context;
 
-    public Knight(Context context, Point point) {
+    public Knight(Context context, Point point, boolean isWhitePiece) {
         this.context = context;
         currentPosition = point;
+        super.isWhitePiece = isWhitePiece;
     }
 
     @Override
@@ -59,19 +61,22 @@ public abstract class Knight extends Piece {
             }
         }
 
-
-
-
         return allValidPositions;
     }
 
 
     @Override
-    abstract public Drawable getDrawable();
+     public Drawable getDrawable(){
+        if(isWhitePiece)
+        {
+            return context.getResources().getDrawable(R.drawable.wn);
+        }
 
-
-    @Override
-    public boolean isAlive() {
-        return isAlive;
+        else{
+            return context.getResources().getDrawable(R.drawable.bn);
+        }
     }
+
+
+
 }

@@ -2,23 +2,26 @@ package chess.project.griffith.pieces;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 
 import java.util.ArrayList;
 
+import chess.project.griffith.chess.R;
 import chess.project.griffith.objects.ChessSquare;
 
 /**
  * Created by aahuyarakshakaharil on 03/12/17.
  */
 
-public abstract class Bishop extends Piece {
+public  class Bishop extends Piece {
     boolean isAlive = true;
     Context context;
 
 
-    public Bishop(Context context, Point point) {
+    public Bishop(Context context, Point point, boolean isWhitePiece) {
         this.context = context;
         currentPosition = point;
+        super.isWhitePiece = isWhitePiece;
     }
 
     @Override
@@ -112,15 +115,24 @@ public abstract class Bishop extends Piece {
         return allValidPositions;
     }
 
+
+    @Override
+    public Drawable getDrawable() {
+        if(isWhitePiece)
+        {
+            return context.getResources().getDrawable(R.drawable.wb);
+        }
+
+        else{
+            return context.getResources().getDrawable(R.drawable.bb);
+        }
+
+    }
+
     @Override
     public Point getCurrentPosition() {
         return currentPosition;
     }
 
 
-
-    @Override
-    public boolean isAlive() {
-        return isAlive;
-    }
 }

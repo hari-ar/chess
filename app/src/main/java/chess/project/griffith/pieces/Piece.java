@@ -15,9 +15,7 @@ import chess.project.griffith.objects.ChessSquare;
 public abstract class Piece {
 
     public abstract ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares);
-    public abstract  String getPieceId();
     public abstract  Drawable getDrawable();
-    public abstract  boolean isAlive();
     boolean isWhitePiece;
     Point currentPosition;
 

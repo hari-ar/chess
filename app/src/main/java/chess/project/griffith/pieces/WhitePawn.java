@@ -97,18 +97,12 @@ public class WhitePawn extends Piece {
     }
 
 
-    @Override
-    public String getPieceId() {
-        return pieceId;
-    }
+
 
     @Override
     public Drawable getDrawable() {
         return context.getResources().getDrawable(R.drawable.wp);
     }
 
-    @Override
-    public boolean isAlive() {
-        return isAlive;
-    }
+
 }
