@@ -21,9 +21,9 @@ public class Queen extends Piece {
         this.currentPosition = point;
         super.isWhitePiece = isWhitePiece;
         if(isWhitePiece)
-            pieceId = "wq";
+            setPieceId("wq");
         else
-            pieceId = "bq";
+            setPieceId("bq");
     }
 
     @Override

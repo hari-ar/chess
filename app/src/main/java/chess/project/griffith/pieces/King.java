@@ -23,9 +23,9 @@ public class King extends Piece {
         currentPosition = point;
         super.isWhitePiece = isWhitePiece;
         if(isWhitePiece)
-            pieceId = "wk";
+            setPieceId("wk");
         else
-            pieceId = "bk";
+            setPieceId("bk");
     }
 
     @Override

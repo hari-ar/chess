@@ -23,7 +23,7 @@ public class BlackPawn extends Piece {
         this.context = context;
         this.currentPosition = point;
         isWhitePiece = false;
-        pieceId = "bp";
+        setPieceId("bp");
     }
 
     @Override
@@ -61,8 +61,8 @@ public class BlackPawn extends Piece {
                     if (chessBoardSquares[7][3].getPiece() == null)
                         allValidPositions.add(new Point(7, 3)); // Two Steps ahead
                 }
-                if(chessBoardSquares[6][3].getPiece()!=null && chessBoardSquares[6][3].getPiece().isWhitePiece())
-                    allValidPositions.add(new Point(6,3)); // Crossing Opponent
+                if(chessBoardSquares[6][2].getPiece()!=null && chessBoardSquares[6][2].getPiece().isWhitePiece())
+                    allValidPositions.add(new Point(6,2)); // Crossing Opponent
             }
             else if(currentPosition.y>1 && currentPosition.y<7){ //All Cases except final rank for white
                 if(chessBoardSquares[7][currentPosition.y+1].getPiece()==null)
@@ -85,7 +85,7 @@ public class BlackPawn extends Piece {
                 if(chessBoardSquares[currentPosition.x-1][2].getPiece()!=null && chessBoardSquares[currentPosition.x-1][2].getPiece().isWhitePiece())
                     allValidPositions.add(new Point(currentPosition.x-1,2));
             }
-            else if(currentPosition.y>1 && currentPosition.y<6){ //All Cases except final rank for black
+            else if(currentPosition.y>1 && currentPosition.y<7){ //All Cases except final rank for black
                 if(chessBoardSquares[currentPosition.x][currentPosition.y+1].getPiece()==null)
                     allValidPositions.add(new Point(currentPosition.x,currentPosition.y+1));
                 if(chessBoardSquares[currentPosition.x-1][currentPosition.y+1].getPiece()!=null && chessBoardSquares[currentPosition.x-1][currentPosition.y+1].getPiece().isWhitePiece())

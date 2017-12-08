@@ -23,9 +23,9 @@ public class Bishop extends Piece {
         currentPosition = point;
         super.isWhitePiece = isWhitePiece;
         if(isWhitePiece)
-            pieceId = "wb";
+            setPieceId("wb");
         else
-            pieceId = "bb";
+            setPieceId("bb");
     }
 
     @Override

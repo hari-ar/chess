@@ -1,6 +1,8 @@
 package chess.project.griffith.views;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -15,10 +17,14 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import chess.project.griffith.objects.Board;
 import chess.project.griffith.chess.R;
 import chess.project.griffith.objects.ChessSquare;
+import chess.project.griffith.pieces.Bishop;
+import chess.project.griffith.pieces.Knight;
 import chess.project.griffith.pieces.Piece;
+import chess.project.griffith.pieces.Queen;
+import chess.project.griffith.pieces.Rook;
+import chess.project.griffith.utils.CommonUtils;
 
 
 /**
@@ -27,6 +33,13 @@ import chess.project.griffith.pieces.Piece;
 
 public class ChessBoardCustomView extends View {
 
+    static boolean isWhiteTurn = true;
+    int rowDown =-1, columnDown =-1, rowUp =-1,columnUp =-1;
+    boolean isHighlightedMode = false;
+    Point selectedPiecePosition = null;
+    boolean isGameOver = false;
+    CommonUtils commonUtils = new CommonUtils();
+    ChessSquare[][] chessBoardSquares;
     private Paint white, black, yellow;
     private float multiplier;
     private Canvas canvas;
@@ -34,23 +47,8 @@ public class ChessBoardCustomView extends View {
     private Rect bounds, highlightBounds;
     private float borderOffset = 3f;
     private float highlightOffset = 5f;
-    private Board board;
-    int rowDown =-1, columnDown =-1, rowUp =-1,columnUp =-1;
-    static boolean isWhiteTurn = true;
-    boolean isHighlightedMode = false;
-    Point selectedPiecePosition = null;
-    long touchDownTime = 0;
-    long touchUpTime = 0;
-
-    public ChessSquare[][] getChessBoardSquares() {
-        return chessBoardSquares;
-    }
-
-    public void setChessBoardSquares(ChessSquare[][] chessBoardSquares) {
-        this.chessBoardSquares = chessBoardSquares;
-    }
-
-    ChessSquare[][] chessBoardSquares;
+    private boolean isStaleMate;
+    static boolean isWhiteKingCastled = false;
 
     public ChessBoardCustomView(Context context) {
         super(context);
@@ -65,6 +63,14 @@ public class ChessBoardCustomView extends View {
     public ChessBoardCustomView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
+    }
+
+    public ChessSquare[][] getChessBoardSquares() {
+        return chessBoardSquares;
+    }
+
+    public void setChessBoardSquares(ChessSquare[][] chessBoardSquares) {
+        this.chessBoardSquares = chessBoardSquares;
     }
 
     //Common method to be called by the constructor..!!
@@ -168,21 +174,23 @@ public class ChessBoardCustomView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         if(event.getActionMasked() == MotionEvent.ACTION_DOWN) { //Get touch down co-ordinates
             float x = event.getX(); float y = event.getY();
-            touchDownTime = System.currentTimeMillis();
+
             rowDown = (int) (x / multiplier);columnDown = (int) (y / multiplier);
-            System.out.println("Touch down x is "+rowDown+" and y is "+columnDown);
-            if(isHighlightedMode) //Reset the suggestions..!!
-            {
-                checkForValidPieceAndUnHighlight();
-            }
-            else{
-                if(chessBoardSquares[rowDown][columnDown].getPiece()!=null){
-                    if(isValidPieceForCurrentTurn())
-                        setHighlightForMoves();
-                    else
-                    {
-                        Toast.makeText(getContext(),"Please select your piece",Toast.LENGTH_SHORT).show();
-                        return false;
+            //System.out.println("Touch down x is "+rowDown+" and y is "+columnDown);
+            if(!isGameOver){
+                if(isHighlightedMode) //Reset the suggestions..!!
+                {
+                    checkForValidPieceAndUnHighlight();
+                }
+                else{
+                    if(chessBoardSquares[rowDown][columnDown].getPiece()!=null){
+                        if(isValidPieceForCurrentTurn())
+                            setHighlightForMoves();
+                        else
+                        {
+                            Toast.makeText(getContext(),"Please select your piece",Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
                     }
                 }
             }
@@ -195,15 +203,118 @@ public class ChessBoardCustomView extends View {
             //Convert user touch co-ordinates to out cell map
             rowUp = (int) (x / multiplier);
             columnUp = (int) (y / multiplier);
-            System.out.println("Touch up x is "+rowUp+" and y is "+columnUp);
+            //System.out.println("Touch up x is "+rowUp+" and y is "+columnUp);
             //Used to move piece in swipes and tocuh up events
-            if(chessBoardSquares[rowUp][columnUp].isHighlighted()){
+            if(!isGameOver && chessBoardSquares[rowUp][columnUp].isHighlighted()){
                 moveSelectedPieceToTouchUp();
             }
         }
 
+        if(commonUtils.isPawnInLastRank(chessBoardSquares)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Congrats...!! Your pawn is promoted. Select a piece..!!");
+            final Point lastRankPawnPosition = commonUtils.getLastRankPawnPosition();
+
+            builder.setItems(R.array.choices, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].getPiece().isWhitePiece()){
+                        if(which == 0)
+                        {
+                            chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Queen(getContext(),lastRankPawnPosition,true));
+                        }
+                        else if(which == 1)
+                        {
+                            chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Rook(getContext(),lastRankPawnPosition,true));
+                        }
+                        else if(which == 2)
+                        {
+                            chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Bishop(getContext(),lastRankPawnPosition,true));
+                        }
+                        else if (which == 3){
+                            chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Knight(getContext(),lastRankPawnPosition,true));
+                        }
+                        invalidate();
+                    }
+                    else{
+                        if(which == 0)
+                        {
+                            chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Queen(getContext(),lastRankPawnPosition,false));
+                        }
+                        else if(which == 1)
+                        {
+                            chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Rook(getContext(),lastRankPawnPosition,false));
+                        }
+                        else if(which == 2)
+                        {
+                            chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Bishop(getContext(),lastRankPawnPosition,false));
+                        }
+                        else if (which == 3){
+                            chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Knight(getContext(),lastRankPawnPosition,false));
+                        }
+                        invalidate();
+                    }
+
+
+                    }
+                }
+            );
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+
+
+        checkForGameOver();
+        if(isGameOver){
+            if(isWhiteTurn)
+                Toast.makeText(getContext(),"Game Over..!! Black Wins",Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(getContext(),"Game Over..!! White Wins",Toast.LENGTH_SHORT).show();
+        }
+        else if(isStaleMate){
+            Toast.makeText(getContext(),"Well Played mate..!! but its Stalemate..!! Reset game to try again",Toast.LENGTH_SHORT).show();
+        }
+
         invalidate();
         return super.onTouchEvent(event);
+    }
+
+    private void checkForGameOver() {
+
+            if(commonUtils.isKingInCheck(chessBoardSquares,isWhiteTurn)){
+                isGameOver = checkForNoValidMove();
+                return;
+            }
+                isStaleMate = checkForNoValidMove();;
+
+
+    }
+
+    private boolean checkForNoValidMove() {
+        if(isWhiteTurn){
+        for(int i=0;i<8;i++){
+            for(int j=0;j<8;j++){
+                if(!chessBoardSquares[i][j].isEmpty() && chessBoardSquares[i][j].getPiece().isWhitePiece()){
+                    ArrayList<Point> validMovesList= chessBoardSquares[i][j].getPiece().getAllValidPositions(chessBoardSquares);
+                    if(validMovesList.size()>0)
+                        return false;
+                }
+            }
+        }
+        }
+            else{
+                for(int i=0;i<8;i++){
+                    for(int j=0;j<8;j++){
+                        if(!chessBoardSquares[i][j].isEmpty() && !chessBoardSquares[i][j].getPiece().isWhitePiece()){
+                            ArrayList<Point> validMovesList= chessBoardSquares[i][j].getPiece().getAllValidPositions(chessBoardSquares);
+                            if(validMovesList.size()>0)
+                                return false;
+                        }
+                    }
+                }
+            }
+
+        return true;
     }
 
     private void checkForValidPieceAndUnHighlight() {
@@ -213,6 +324,10 @@ public class ChessBoardCustomView extends View {
             {
                 unhighlightSquares();
                 isHighlightedMode = false;
+            }
+            else{
+            if(!isTouchDownOnOpponentPiece() )
+                Toast.makeText(getContext(),"Please click on valid square to make move or click on highlighted piece to unselect the piece..!!",Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -242,7 +357,7 @@ public class ChessBoardCustomView extends View {
     }
 
     private void moveSelectedPieceToTouchUp() {
-        if(selectedPiecePosition.x !=rowUp || selectedPiecePosition.y !=columnUp)
+        if(selectedPiecePosition.x !=rowUp || selectedPiecePosition.y !=columnUp) //Needed to check if user clicked on same position again
         {
         Piece piece = chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece();
         piece.setCurrentPosition(new Point(rowUp,columnUp));

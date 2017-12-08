@@ -22,9 +22,9 @@ public class Knight extends Piece {
         currentPosition = point;
         super.isWhitePiece = isWhitePiece;
         if(isWhitePiece)
-            pieceId = "wn";
+            setPieceId("wn");
         else
-            pieceId = "bn";
+            setPieceId("bn");
     }
 
     @Override

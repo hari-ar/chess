@@ -22,9 +22,9 @@ public class Rook extends Piece {
         currentPosition = point;
         super.isWhitePiece = isWhitePiece;
         if(isWhitePiece)
-            pieceId = "wr";
+            setPieceId("wr");
         else
-            pieceId = "br";
+            setPieceId("br");
     }
 
     @Override

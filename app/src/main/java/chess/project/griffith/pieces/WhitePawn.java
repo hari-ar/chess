@@ -25,7 +25,7 @@ public class WhitePawn extends Piece {
         this.context = context;
         this.currentPosition = point;
         isWhitePiece = true;
-        pieceId = "wp";
+        setPieceId("wp");
     }
 
     @Override
