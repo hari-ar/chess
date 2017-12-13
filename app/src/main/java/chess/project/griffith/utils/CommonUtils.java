@@ -3,6 +3,7 @@ package chess.project.griffith.utils;
 import android.graphics.Point;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import chess.project.griffith.objects.ChessSquare;
 
@@ -13,6 +14,11 @@ import chess.project.griffith.objects.ChessSquare;
 public class CommonUtils {
 
     private Point lastRankPawnPosition;
+    private HashSet<String> piecesNeededForForcedMate = new HashSet<>();
+
+    public CommonUtils(HashSet<String> piecesNeededForForcedMate) {
+        this.piecesNeededForForcedMate = piecesNeededForForcedMate;
+    }
 
     public boolean isKingInCheck(final ChessSquare[][] testBoard, boolean isWhitePiece) {
         Point kingPosition = getKingPositionFromBoard(testBoard,isWhitePiece);
@@ -84,4 +90,66 @@ public class CommonUtils {
     }
 
 
+    public boolean checkForEnoughMaterials(ChessSquare[][] chessBoardSquares) {
+
+            boolean whiteLightBishop = false;
+            boolean whiteDarkBishop = false;
+            boolean blackLightBishop = false;
+            boolean blackDarkBishop = false;
+            boolean whiteKnight = false;
+            boolean blackKnight = false;
+            int whiteKnightCount =0;
+            int blackKnightCount =0;
+
+            for(int i=0;i<8;i++){
+                for(int j=0;j<8;j++){
+                    if(!chessBoardSquares[i][j].isEmpty()){
+                        String id = chessBoardSquares[i][j].getPiece().getPieceId();
+                        if(piecesNeededForForcedMate.contains(id)){
+                            return false;
+                        }
+                        if("wn".equals(id)){
+                            whiteKnight = true;
+                            whiteKnightCount++;
+                        }
+                        else if("bn".equals(id)){
+                            blackKnight = true;
+                            blackKnightCount++;
+                        }
+                        else if("wb".equals(id)){
+                            if((i+j)%2==0){
+                                whiteDarkBishop = true;
+                            }
+                            else
+                                whiteLightBishop = true;
+                        }
+                        else if("bb".equals(id)){
+                            if((i+j)%2==0){
+                                blackDarkBishop= true;
+                            }
+                            else
+                                blackLightBishop= true;
+                        }
+                    }
+                }
+            }
+            if(whiteKnightCount > 1 || blackKnightCount > 1)//Two Knights
+            {
+                return false;
+            }
+            if((whiteDarkBishop && whiteKnight) || (whiteLightBishop && whiteKnight)) //OneBishop and a Knight
+            {
+                return false;
+            }
+            if((blackDarkBishop &&  blackKnight)|| (blackLightBishop && blackKnight))//OneBishop and a Knight
+            {
+                return false;
+            }
+            if((whiteDarkBishop && whiteLightBishop) || (blackDarkBishop && blackLightBishop)) //Two Opposite Colored Bishops
+            {
+                return false;
+            }
+
+            return true;
+        }
 }

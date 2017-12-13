@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import chess.project.griffith.chess.R;
 import chess.project.griffith.objects.ChessSquare;
@@ -38,7 +39,7 @@ public class ChessBoardCustomView extends View {
     boolean isHighlightedMode = false;
     Point selectedPiecePosition = null;
     boolean isGameOver = false;
-    CommonUtils commonUtils = new CommonUtils();
+    CommonUtils commonUtils ;
     ChessSquare[][] chessBoardSquares;
     private Paint white, black, yellow;
     private float multiplier;
@@ -48,7 +49,11 @@ public class ChessBoardCustomView extends View {
     private float borderOffset = 3f;
     private float highlightOffset = 5f;
     private boolean isStaleMate;
+
+    private HashSet<String> piecesNeededForForcedMate;
+
     static boolean isWhiteKingCastled = false;
+    private boolean isNotEnoughMaterialsToCheckmate = false;
 
     public ChessBoardCustomView(Context context) {
         super(context);
@@ -76,6 +81,8 @@ public class ChessBoardCustomView extends View {
     //Common method to be called by the constructor..!!
     //Gives consitent behaviour irrespective of how the view is initialized.
     private void init() {
+
+
         black = new Paint();
         white = new Paint();
         yellow = new Paint();
@@ -86,6 +93,17 @@ public class ChessBoardCustomView extends View {
         //Setting Anti Aliasing Flags..!!
         white.setAntiAlias(true);
         black.setAntiAlias(true);
+
+        piecesNeededForForcedMate = new HashSet<>();
+        piecesNeededForForcedMate.add("wp");
+        piecesNeededForForcedMate.add("bp");
+        piecesNeededForForcedMate.add("bq");
+        piecesNeededForForcedMate.add("wq");
+        piecesNeededForForcedMate.add("br");
+        piecesNeededForForcedMate.add("wr");
+
+        commonUtils = new CommonUtils(piecesNeededForForcedMate);
+
     }
 
     @Override
@@ -254,8 +272,6 @@ public class ChessBoardCustomView extends View {
                         }
                         invalidate();
                     }
-
-
                     }
                 }
             );
@@ -265,6 +281,7 @@ public class ChessBoardCustomView extends View {
 
 
         checkForGameOver();
+
         if(isGameOver){
             if(isWhiteTurn)
                 Toast.makeText(getContext(),"Game Over..!! Black Wins",Toast.LENGTH_SHORT).show();
@@ -273,6 +290,9 @@ public class ChessBoardCustomView extends View {
         }
         else if(isStaleMate){
             Toast.makeText(getContext(),"Well Played mate..!! but its Stalemate..!! Reset game to try again",Toast.LENGTH_SHORT).show();
+        }
+        else if(isNotEnoughMaterialsToCheckmate){
+            Toast.makeText(getContext(),"Its a Draw..!! Not enough materials to continue",Toast.LENGTH_SHORT).show();
         }
 
         invalidate();
@@ -286,11 +306,17 @@ public class ChessBoardCustomView extends View {
                 return;
             }
                 isStaleMate = checkForNoValidMove();;
+                isNotEnoughMaterialsToCheckmate = commonUtils.checkForEnoughMaterials(chessBoardSquares);
 
 
     }
 
+
+
     private boolean checkForNoValidMove() {
+
+
+
         if(isWhiteTurn){
         for(int i=0;i<8;i++){
             for(int j=0;j<8;j++){
