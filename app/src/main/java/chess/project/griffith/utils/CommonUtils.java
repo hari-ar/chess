@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import chess.project.griffith.objects.ChessSquare;
+import chess.project.griffith.pieces.BlackPawn;
+import chess.project.griffith.pieces.WhitePawn;
 
 /**
  * Created by aahuyarakshakaharil on 07/12/17.
@@ -157,14 +159,20 @@ public class CommonUtils {
             return true;
         }
 
-    public ChessSquare[][] copyDataIntoBackupArray(ChessSquare[][] chessBoardSquares) {
-        ChessSquare[][] chessBoardLastMoveState = new ChessSquare[8][8];
+
+
+    public void resetEnpassent(boolean isWhiteTurn, ChessSquare[][] chessBoardSquares) {
         for(int i = 0; i<8; i++){
             for(int j =0;j<8;j++){
-                chessBoardLastMoveState[i][j] =  chessBoardSquares[i][j];
+                if(isWhiteTurn && !chessBoardSquares[i][j].isEmpty() && "wp".equals(chessBoardSquares[i][j].getPiece().getPieceId())){
+                    WhitePawn wp = (WhitePawn) chessBoardSquares[i][j].getPiece();
+                    wp.setEnPassantEligible(false, null);
+                }
+                else if(!isWhiteTurn && !chessBoardSquares[i][j].isEmpty() && "bp".equals(chessBoardSquares[i][j].getPiece().getPieceId())){
+                    BlackPawn blackPawn = (BlackPawn) chessBoardSquares[i][j].getPiece();
+                    blackPawn.setEnPassantEligible(false, null);
+                }
             }
         }
-        return chessBoardLastMoveState;
     }
-
 }

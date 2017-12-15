@@ -95,6 +95,9 @@ public class BlackPawn extends Piece {
                     allValidPositions.add(new Point(currentPosition.x+1,currentPosition.y+1));
             }
         }
+        if(enPassantEligible){
+            allValidPositions.add(enPassantEligiblePoint);
+        }
         return allValidPositions;
     }
 

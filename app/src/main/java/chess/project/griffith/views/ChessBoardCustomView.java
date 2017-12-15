@@ -132,6 +132,7 @@ public class ChessBoardCustomView extends View {
         isStaleMate = false;
         commonUtils = new CommonUtils(piecesNeededForForcedMate);
         isWhiteTurn = true;
+        invalidate();
     }
 
     @Override
@@ -447,36 +448,49 @@ public class ChessBoardCustomView extends View {
         }
 
         if("wp".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId())){
-            if(columnUp == 4) //Check for two steps.
+
+            //Check to enable enpassant
+            if(columnUp == 4 && selectedPiecePosition.y ==6) //Check for two steps.
             {
                 //Check for black pawn in touchUp + 1 or - 1
-                if("bp".equals(chessBoardSquares[rowUp+1][4])){
+                if(rowUp!=7 && !chessBoardSquares[rowUp+1][4].isEmpty() && "bp".equals(chessBoardSquares[rowUp+1][4].getPiece().getPieceId())){ //Check for corner pieces
                     BlackPawn bp = (BlackPawn) chessBoardSquares[rowUp+1][4].getPiece();
                     bp.setEnPassantEligible(true,new Point(rowUp,5));
                 }
-                if("bp".equals(chessBoardSquares[rowUp-1][4])){
+                if(rowUp!=0 && !chessBoardSquares[rowUp-1][4].isEmpty() && "bp".equals(chessBoardSquares[rowUp-1][4].getPiece().getPieceId())){
                     BlackPawn bp = (BlackPawn) chessBoardSquares[rowUp-1][4].getPiece();
                     bp.setEnPassantEligible(true,new Point(rowUp,5));
                 }
             }
+
+            //Check for capturing
+            if(columnUp == 2 && "bp".equals(chessBoardSquares[rowUp][columnUp+1].getPiece().getPieceId())){
+                chessBoardSquares[rowUp][columnUp+1].setPiece(null);
+            }
+
         }
 
         if("bp".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId())){
-            if(columnUp == 5) //Check for two steps.
+            if(columnUp == 3 && selectedPiecePosition.y ==1) //Check for two steps.
             {
                 //Check for black pawn in touchUp + 1 or - 1
-                if("wp".equals(chessBoardSquares[rowUp+1][3])){
+
+                if(rowUp!=7 && !chessBoardSquares[rowUp+1][3].isEmpty() && "wp".equals(chessBoardSquares[rowUp+1][3].getPiece().getPieceId())){
                     WhitePawn wp = (WhitePawn) chessBoardSquares[rowUp+1][3].getPiece();
                     wp.setEnPassantEligible(true, new Point(rowUp,2));
                 }
-                if("wp".equals(chessBoardSquares[rowUp-1][3])){
+                if(rowUp!=0 && !chessBoardSquares[rowUp-1][3].isEmpty() && "wp".equals(chessBoardSquares[rowUp-1][3].getPiece().getPieceId())){
                     WhitePawn wp = (WhitePawn)  chessBoardSquares[rowUp-1][3].getPiece();
                     wp.setEnPassantEligible(true, new Point(rowUp,2));
                 }
             }
+            //Check for capturing
+            if(columnUp == 5 && "wp".equals(chessBoardSquares[rowUp][columnUp-1].getPiece().getPieceId())){
+                chessBoardSquares[rowUp][columnUp-1].setPiece(null);
+            }
         }
 
-
+            commonUtils.resetEnpassent(isWhiteTurn,chessBoardSquares);
         chessBoardSquares[rowUp][columnUp].setPiece(piece);
 
 
