@@ -15,7 +15,8 @@ import chess.project.griffith.objects.ChessSquare;
 
 public class BlackPawn extends Piece {
     boolean isAlive = true;
-
+    private boolean enPassantEligible = false;
+    private Point enPassantEligiblePoint = null;
     Context context;
 
 
@@ -102,5 +103,10 @@ public class BlackPawn extends Piece {
         return context.getResources().getDrawable(R.drawable.bp);
     }
 
+
+    public void setEnPassantEligible(boolean enPassantEligible, Point enPassantEligiblePoint) {
+        this.enPassantEligible = enPassantEligible;
+        this.enPassantEligiblePoint = enPassantEligiblePoint;
+    }
 
 }

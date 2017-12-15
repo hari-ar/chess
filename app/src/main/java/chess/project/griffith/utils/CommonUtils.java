@@ -20,6 +20,10 @@ public class CommonUtils {
         this.piecesNeededForForcedMate = piecesNeededForForcedMate;
     }
 
+    public CommonUtils(){
+        //Do nothing overloaded constructor
+    }
+
     public boolean isKingInCheck(final ChessSquare[][] testBoard, boolean isWhitePiece) {
         Point kingPosition = getKingPositionFromBoard(testBoard,isWhitePiece);
         for(int x = 0; x<8;x++){
@@ -152,4 +156,15 @@ public class CommonUtils {
 
             return true;
         }
+
+    public ChessSquare[][] copyDataIntoBackupArray(ChessSquare[][] chessBoardSquares) {
+        ChessSquare[][] chessBoardLastMoveState = new ChessSquare[8][8];
+        for(int i = 0; i<8; i++){
+            for(int j =0;j<8;j++){
+                chessBoardLastMoveState[i][j] =  chessBoardSquares[i][j];
+            }
+        }
+        return chessBoardLastMoveState;
+    }
+
 }

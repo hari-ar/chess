@@ -80,4 +80,5 @@ public abstract class Piece {
         return isWhitePiece;
     }
 
+
 }

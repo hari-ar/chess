@@ -11,7 +11,7 @@
 
 
     <TextView
-            android:id="@+id/total_number_of_mines"
+            android:id="@+id/display"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_weight="0.3"
@@ -26,21 +26,17 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:padding="25dp" />
-    <chess.project.griffith.views.DiedPiecesCustomView
+
+
+    <Button
+        android:id="@+id/reset_button2"
         android:layout_width="match_parent"
-        android:text="sd"
-        android:layout_height="50dp" />
+        android:layout_height="50dp"
+        android:layout_weight="0.3"
+        android:onClick="resetGame"
 
-
-        <Button
-            android:id="@+id/reset_button"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_weight="0.3"
-            android:onClick="resetGame"
-
-            android:text="@string/reset_button_text"
-            tools:ignore="ButtonStyle" />
+        android:text="@string/reset_button_text"
+        tools:ignore="ButtonStyle" />
 
 
 </LinearLayout>

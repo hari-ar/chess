@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import chess.project.griffith.objects.ChessSquare;
 import chess.project.griffith.chess.R;
@@ -19,17 +20,21 @@ import chess.project.griffith.views.ChessBoardCustomView;
 public class MainActivity extends AppCompatActivity {
 
    ChessSquare[][] chessBoardSquares = new ChessSquare[8][8];
+   ChessBoardCustomView chessBoardCustomView;
+   public TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initBoard();
+        chessBoardCustomView.setMainActivity(this);
     }
 
     private void initBoard() {
 
-        ChessBoardCustomView chessBoardCustomView = findViewById(R.id.chessBoardView);
+        chessBoardCustomView = findViewById(R.id.chessBoardView);
+        textView = findViewById(R.id.display);
         //Pawn
         for (int x = 0; x<8 ; x++){ //Loop for pawns
             for(int y = 0; y<8 ; y++) {
@@ -63,5 +68,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void resetGame(View view) {
+        chessBoardSquares = new ChessSquare[8][8];
+        initBoard();
+        chessBoardCustomView.init();
     }
+
 }

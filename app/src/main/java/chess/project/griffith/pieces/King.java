@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import chess.project.griffith.chess.R;
 import chess.project.griffith.objects.ChessSquare;
+import chess.project.griffith.views.ChessBoardCustomView;
 
 /**
  * Created by aahuyarakshakaharil on 03/12/17.
@@ -30,7 +31,50 @@ public class King extends Piece {
 
     @Override
     public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
-        return filterInvalidPositions(chessBoardSquares,getAllPossiblePositions(chessBoardSquares),this);
+        ArrayList<Point> returnedData =  filterInvalidPositions(chessBoardSquares,getAllPossiblePositions(chessBoardSquares),this);
+        if(isWhitePiece && ChessBoardCustomView.isWhiteKingSideCastlingEligible){
+            for(int i=0;i<returnedData.size();i++){
+                if(returnedData.get(i).x == 5 && returnedData.get(i).y == 7)
+                {
+                    if(chessBoardSquares[6][7].isEmpty())
+                    returnedData.add(new Point(6,7));
+
+                }
+            }
+
+        }
+        if(isWhitePiece && ChessBoardCustomView.isWhiteQueengSideCastlingEligible){
+            for(int i=0;i<returnedData.size();i++){
+                if(returnedData.get(i).x == 3 && returnedData.get(i).y == 7)
+                {
+                    if(chessBoardSquares[2][7].isEmpty())
+                    returnedData.add(new Point(2,7));
+                }
+            }
+
+        }
+        if(!isWhitePiece && ChessBoardCustomView.isBlackKingSideCastlingEligible){
+            for(int i=0;i<returnedData.size();i++){
+                if(returnedData.get(i).x == 5 && returnedData.get(i).y == 0)
+                {
+                    if(chessBoardSquares[6][0].isEmpty())
+                    returnedData.add(new Point(6,0));
+
+                }
+            }
+
+        }
+        if(!isWhitePiece && ChessBoardCustomView.isBlackQueengSideCastlingEligible){
+            for(int i=0;i<returnedData.size();i++){
+                if(returnedData.get(i).x == 3 && returnedData.get(i).y == 0)
+                {
+                    if(chessBoardSquares[2][0].isEmpty())
+                    returnedData.add(new Point(2,0));
+                }
+            }
+
+        }
+             return filterInvalidPositions(chessBoardSquares,returnedData,this);
     }
 
     @Override
@@ -64,6 +108,9 @@ public class King extends Piece {
                 }
             }
         }
+
+
+
         return allValidPositions;
     }
 

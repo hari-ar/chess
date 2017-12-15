@@ -17,6 +17,8 @@ public class WhitePawn extends Piece {
 
     boolean isAlive = true;
     Context context;
+    private boolean enPassantEligible = false;
+    private Point enPassantEligiblePoint = null;
 
 
 
@@ -103,6 +105,11 @@ public class WhitePawn extends Piece {
     @Override
     public Drawable getDrawable() {
         return context.getResources().getDrawable(R.drawable.wp);
+    }
+
+    public void setEnPassantEligible(boolean enPassantEligible, Point enPassantEligiblePoint) {
+        this.enPassantEligible = enPassantEligible;
+        this.enPassantEligiblePoint = enPassantEligiblePoint;
     }
 
 
