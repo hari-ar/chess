@@ -161,7 +161,7 @@ public class CommonUtils {
 
 
 
-    public void resetEnpassent(boolean isWhiteTurn, ChessSquare[][] chessBoardSquares) {
+    public void resetEnpassant(boolean isWhiteTurn, ChessSquare[][] chessBoardSquares) {
         for(int i = 0; i<8; i++){
             for(int j =0;j<8;j++){
                 if(isWhiteTurn && !chessBoardSquares[i][j].isEmpty() && "wp".equals(chessBoardSquares[i][j].getPiece().getPieceId())){

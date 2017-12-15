@@ -1,6 +1,5 @@
 package chess.project.griffith.views;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -464,7 +463,7 @@ public class ChessBoardCustomView extends View {
             }
 
             //Check for capturing
-            if(columnUp == 2 && "bp".equals(chessBoardSquares[rowUp][columnUp+1].getPiece().getPieceId())){
+            if(columnUp == 2 && chessBoardSquares[rowUp][columnUp].isEmpty() && !chessBoardSquares[rowUp][columnUp+1].isEmpty() && "bp".equals(chessBoardSquares[rowUp][columnUp+1].getPiece().getPieceId())){
                 chessBoardSquares[rowUp][columnUp+1].setPiece(null);
             }
 
@@ -474,7 +473,6 @@ public class ChessBoardCustomView extends View {
             if(columnUp == 3 && selectedPiecePosition.y ==1) //Check for two steps.
             {
                 //Check for black pawn in touchUp + 1 or - 1
-
                 if(rowUp!=7 && !chessBoardSquares[rowUp+1][3].isEmpty() && "wp".equals(chessBoardSquares[rowUp+1][3].getPiece().getPieceId())){
                     WhitePawn wp = (WhitePawn) chessBoardSquares[rowUp+1][3].getPiece();
                     wp.setEnPassantEligible(true, new Point(rowUp,2));
@@ -485,12 +483,12 @@ public class ChessBoardCustomView extends View {
                 }
             }
             //Check for capturing
-            if(columnUp == 5 && "wp".equals(chessBoardSquares[rowUp][columnUp-1].getPiece().getPieceId())){
+            if(columnUp == 5 && chessBoardSquares[rowUp][columnUp].isEmpty() && !chessBoardSquares[rowUp][columnUp-1].isEmpty() &&"wp".equals(chessBoardSquares[rowUp][columnUp-1].getPiece().getPieceId())){
                 chessBoardSquares[rowUp][columnUp-1].setPiece(null);
             }
         }
 
-            commonUtils.resetEnpassent(isWhiteTurn,chessBoardSquares);
+            commonUtils.resetEnpassant(isWhiteTurn,chessBoardSquares);
         chessBoardSquares[rowUp][columnUp].setPiece(piece);
 
 

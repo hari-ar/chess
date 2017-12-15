@@ -8,17 +8,14 @@
     tools:context="chess.project.griffith.activities.MainActivity">
 
 
-
-
     <TextView
-            android:id="@+id/display"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_weight="0.3"
-            android:gravity="center"
-            android:text="White to Play"
-            android:textSize="20sp" />
-
+        android:id="@+id/display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.1"
+        android:gravity="center"
+        android:text="White to Play"
+        android:textSize="20sp" />
 
     <chess.project.griffith.views.ChessBoardCustomView
         android:id="@+id/chessBoardView"
@@ -27,12 +24,11 @@
         android:layout_gravity="center"
         android:padding="25dp" />
 
-
     <Button
         android:id="@+id/reset_button2"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_weight="0.3"
+        android:layout_height="18dp"
+        android:layout_weight="0.2"
         android:onClick="resetGame"
 
         android:text="@string/reset_button_text"
