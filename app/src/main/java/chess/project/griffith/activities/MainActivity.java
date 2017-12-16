@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         chessBoardCustomView.setChessBoardSquares(chessBoardSquares);
     }
 
+    //Method called when reset button is clicked.
     public void resetGame(View view) {
         chessBoardSquares = new ChessSquare[8][8];
         initBoard();

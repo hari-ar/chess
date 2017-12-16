@@ -31,170 +31,23 @@ public class Queen extends Piece {
         return super.filterInvalidPositions(chessBoardSquares,getAllPossiblePositions(chessBoardSquares),this);
     }
 
+
     @Override
     public ArrayList<Point> getAllPossiblePositions(ChessSquare[][] chessBoardSquares) {
         ArrayList<Point> allValidPositions = new ArrayList<>();
+        ArrayList<Point> tempPositions = new ArrayList<>();
         int x = currentPosition.x;
         int y = currentPosition.y;
-        for(int i = 1 ; i < 8 ; i++){ // Move left on same column
-            int testX = x-i;
-            if(testX>=0){
-                if(chessBoardSquares[testX][y].isEmpty()){
-                    allValidPositions.add(new Point(testX,y));
-                }
-                else{
-                    if(isWhitePiece && !chessBoardSquares[testX][y].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(testX,y));
-                    }
-                    else if (!isWhitePiece && chessBoardSquares[testX][y].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(testX,y));
-                    }
-                    break;
-                }
-            }
-        }
-        for(int i = 1 ; i < 8 ; i++){ // Move right on same column
-            int testX = x+i;
-            if(testX<=7){
-                if(chessBoardSquares[testX][y].isEmpty()){
-                    allValidPositions.add(new Point(testX,y));
-                }
-                else{
-                    if(isWhitePiece && !chessBoardSquares[testX][y].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(testX,y));
-                    }
-                    else if (!isWhitePiece && chessBoardSquares[testX][y].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(testX,y));
-                    }
-                    break;
-                }
-            }
-        }
-
-        for(int i = 1 ; i < 8 ; i++){ // Move up on same row
-            int testY = y-i;
-            if(testY>=0){
-                if(chessBoardSquares[x][testY].isEmpty()){
-                    allValidPositions.add(new Point(x,testY));
-                }
-                else{
-                    if(isWhitePiece && !chessBoardSquares[x][testY].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(x,testY));
-                    }
-                    else if (!isWhitePiece && chessBoardSquares[x][testY].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(x,testY));
-                    }
-                    break;
-                }
-            }
-        }
-
-        for(int i = 1 ; i < 8 ; i++) { // Move bottom on same row
-            int testY = y + i;
-            if (testY <= 7) {
-                if (chessBoardSquares[x][testY].isEmpty()) {
-                    allValidPositions.add(new Point(x, testY));
-                } else {
-                    if (isWhitePiece && !chessBoardSquares[x][testY].getPiece().isWhitePiece) {
-                        allValidPositions.add(new Point(x, testY));
-                    } else if (!isWhitePiece && chessBoardSquares[x][testY].getPiece().isWhitePiece) {
-                        allValidPositions.add(new Point(x, testY));
-                    }
-                    break;
-                }
-            }
-        }
-        for(int i = 1 ; i < 8 ; i++){ //Top left
-            int testX = x-i;
-            int testY = y-i;
-            if( testX>=0 && testY >=0){
-                if(chessBoardSquares[testX][testY].isEmpty()){
-                    allValidPositions.add(new Point(testX,testY));
-                }
-                else{
-                    if(isWhitePiece && !chessBoardSquares[testX][testY].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(testX,testY));
-                    }
-                    else if (!isWhitePiece && chessBoardSquares[testX][testY].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(testX,testY));
-                    }
-                    break;
-                }
-            }
-        }
-
-        for(int i = 1 ; i < 8 ; i++){ //Top Right
-            int testX = x+i;
-            int testY = y-i;
-            if( testX<=7 && testY >=0){
-                if(chessBoardSquares[testX][testY].isEmpty()){
-                    allValidPositions.add(new Point(testX,testY));
-                }
-                else{
-                    if(isWhitePiece && !chessBoardSquares[testX][testY].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(testX,testY));
-                    }
-                    else if (!isWhitePiece && chessBoardSquares[testX][testY].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(testX,testY));
-                    }
-                    break;
-                }
-            }
-        }
-
-        for(int i = 1 ; i < 8 ; i++){ //Bottom Right
-            int testX = x+i;
-            int testY = y+i;
-            if( testX<=7 && testY <=7){
-                if(chessBoardSquares[testX][testY].isEmpty()){
-                    allValidPositions.add(new Point(testX,testY));
-                }
-                else{
-                    if(isWhitePiece && !chessBoardSquares[testX][testY].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(testX,testY));
-                    }
-                    else if (!isWhitePiece && chessBoardSquares[testX][testY].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(testX,testY));
-                    }
-                    break;
-                }
-            }
-        }
-
-        for(int i = 1 ; i < 8 ; i++){ //Bottom Left
-            int testX = x-i;
-            int testY = y+i;
-            if( testX>=0 && testY <=7){
-                if(chessBoardSquares[testX][testY].isEmpty()){
-                    allValidPositions.add(new Point(testX,testY));
-                }
-                else{
-                    if(isWhitePiece && !chessBoardSquares[testX][testY].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(testX,testY));
-                    }
-                    else if (!isWhitePiece && chessBoardSquares[testX][testY].getPiece().isWhitePiece)
-                    {
-                        allValidPositions.add(new Point(testX,testY));
-                    }
-                    break;
-                }
-            }
+        Piece piece = new Bishop(context,currentPosition,isWhitePiece);
+        allValidPositions = piece.getAllPossiblePositions(chessBoardSquares);
+        piece = new Rook(context,currentPosition,isWhitePiece);
+        tempPositions = piece.getAllPossiblePositions(chessBoardSquares);
+        for(int i =0; i<tempPositions.size(); i++){
+            allValidPositions.add(tempPositions.get(i));
         }
         return allValidPositions;
     }
+
 
 
     @Override

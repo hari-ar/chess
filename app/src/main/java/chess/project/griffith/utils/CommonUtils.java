@@ -161,6 +161,8 @@ public class CommonUtils {
 
 
 
+
+
     public void resetEnpassant(boolean isWhiteTurn, ChessSquare[][] chessBoardSquares) {
         for(int i = 0; i<8; i++){
             for(int j =0;j<8;j++){
@@ -175,4 +177,33 @@ public class CommonUtils {
             }
         }
     }
+
+    public boolean checkForNoValidMove(ChessSquare[][] chessBoardSquares, boolean isWhiteTurn) {
+        if(isWhiteTurn){
+            for(int i=0;i<8;i++){
+                for(int j=0;j<8;j++){
+                    if(!chessBoardSquares[i][j].isEmpty() && chessBoardSquares[i][j].getPiece().isWhitePiece()){
+                        ArrayList<Point> validMovesList= chessBoardSquares[i][j].getPiece().getAllValidPositions(chessBoardSquares);
+                        if(validMovesList.size()>0)
+                            return false;
+                    }
+                }
+            }
+        }
+        else{
+            for(int i=0;i<8;i++){
+                for(int j=0;j<8;j++){
+                    if(!chessBoardSquares[i][j].isEmpty() && !chessBoardSquares[i][j].getPiece().isWhitePiece()){
+                        ArrayList<Point> validMovesList= chessBoardSquares[i][j].getPiece().getAllValidPositions(chessBoardSquares);
+                        if(validMovesList.size()>0)
+                            return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+
 }

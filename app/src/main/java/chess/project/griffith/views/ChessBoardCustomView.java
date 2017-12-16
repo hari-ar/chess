@@ -54,21 +54,20 @@ public class ChessBoardCustomView extends View {
     private float borderOffset;
     private float highlightOffset ;
     private boolean isStaleMate = false;
-    static public boolean enPassantEligible = false;
-
 
     private MainActivity mainActivity;
 
 
     public static boolean isWhiteKingSideCastlingEligible = true;
-    public static boolean isWhiteQueengSideCastlingEligible = true;
-    public static boolean isBlackQueengSideCastlingEligible = true;
+    public static boolean isWhiteQueenSideCastlingEligible = true;
+    public static boolean isBlackQueenSideCastlingEligible = true;
     public static boolean isBlackKingSideCastlingEligible = true;
 
 
 
     private boolean isNotEnoughMaterialsToCheckmate = false;
 
+    //Constructor Block Begins
     public ChessBoardCustomView(Context context) {
         super(context);
         init();
@@ -83,14 +82,9 @@ public class ChessBoardCustomView extends View {
         super(context, attrs, defStyleAttr);
         init();
     }
+    //Constructors Block Ends
 
-    public ChessSquare[][] getChessBoardSquares() {
-        return chessBoardSquares;
-    }
 
-    public void setChessBoardSquares(ChessSquare[][] chessBoardSquares) {
-        this.chessBoardSquares = chessBoardSquares;
-    }
 
     //Common method to be called by the constructor..!!
     //Gives consitent behaviour irrespective of how the view is initialized.
@@ -108,6 +102,7 @@ public class ChessBoardCustomView extends View {
         white.setAntiAlias(true);
         black.setAntiAlias(true);
 
+        //Minimum of one Piece of any of following ensure game continues.
         HashSet<String> piecesNeededForForcedMate = new HashSet<>();
         piecesNeededForForcedMate.add("wp");
         piecesNeededForForcedMate.add("bp");
@@ -115,22 +110,32 @@ public class ChessBoardCustomView extends View {
         piecesNeededForForcedMate.add("wq");
         piecesNeededForForcedMate.add("br");
         piecesNeededForForcedMate.add("wr");
+
+        //Reset Castling Flags
         isWhiteKingSideCastlingEligible = true;
-        isWhiteQueengSideCastlingEligible = true;
-        isBlackQueengSideCastlingEligible = true;
+        isWhiteQueenSideCastlingEligible = true;
+        isBlackQueenSideCastlingEligible = true;
         isBlackKingSideCastlingEligible = true;
+
+        //Reset Game Flags
+        isHighlightedMode = false;
+        isStaleMate = false;
+        isGameOver = false;
+        isWhiteTurn = true;
+
+        //Default positions.
         rowDown =-1;
         columnDown =-1;
         rowUp =-1;
         columnUp =-1;
-        isHighlightedMode = false;
+
+
+        //Reset other values to default.
         selectedPiecePosition = null;
-        isGameOver = false;
         borderOffset = 3f;
         highlightOffset = 5f;
-        isStaleMate = false;
         commonUtils = new CommonUtils(piecesNeededForForcedMate);
-        isWhiteTurn = true;
+        //Calling invalidate again., to be sure to refresh on reset.
         invalidate();
     }
 
@@ -156,12 +161,13 @@ public class ChessBoardCustomView extends View {
         }
         if(bounds==null) //Avoids unnecessary initialization
         {
+            //Calculating bounds for rectangle which holds the color.
             int left = (int) (borderOffset -multiplier/2);
             int top = (int) (borderOffset - multiplier/2);
             int right = (int) (multiplier/2 - borderOffset);
             int bottom = (int) (multiplier/2- borderOffset);
             bounds = new Rect(left, top, right , bottom);
-
+            //Adjusting for offset
             left = (int) (highlightOffset -multiplier/2);
             top = (int) (highlightOffset - multiplier/2);
             right = (int) (multiplier/2 - highlightOffset);
@@ -188,8 +194,7 @@ public class ChessBoardCustomView extends View {
                         canvas.drawRect(square, black); //Render Rectangles//drawTextInsideTheCell(row, col); //Print the data
                     }
                     if(chessBoardSquares[row][col].isHighlighted()){
-
-                        canvas.drawRect(highlightBounds, yellow); //Render Rectangles
+                        canvas.drawRect(highlightBounds, yellow); //Render Rectangles to display hi
                     }
 
                     if(chessBoardSquares[row][col].getPiece()!= null){
@@ -217,8 +222,11 @@ public class ChessBoardCustomView extends View {
     }
 
 
+    //Method to handle touch events on custom view.
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+
         if(event.getActionMasked() == MotionEvent.ACTION_DOWN) { //Get touch down co-ordinates
             float x = event.getX(); float y = event.getY();
 
@@ -227,11 +235,16 @@ public class ChessBoardCustomView extends View {
             if(!isGameOver){
                 if(isHighlightedMode) //Reset the suggestions..!!
                 {
+                    if(!chessBoardSquares[rowDown][columnDown].isHighlighted())
+                    {
+                        Toast.makeText(getContext(),"Please click on selected piece to unhighlight",Toast.LENGTH_SHORT).show();
+                    }
                     checkForValidPieceAndUnHighlight();
                 }
                 else{
                     if(chessBoardSquares[rowDown][columnDown].getPiece()!=null){
-                        if(isValidPieceForCurrentTurn())
+                        //Check if user selected on valid piece
+                        if(!isTouchDownOnOpponentPiece())
                             setHighlightForMoves();
                         else
                         {
@@ -244,14 +257,15 @@ public class ChessBoardCustomView extends View {
             return true;
         }
         if(event.getActionMasked() == MotionEvent.ACTION_UP) {//Get touch up co-ordinates
+            //Get touch points.
             float x = event.getX();
             float y = event.getY();
 
             //Convert user touch co-ordinates to out cell map
             rowUp = (int) (x / multiplier);
             columnUp = (int) (y / multiplier);
-            //System.out.println("Touch up x is "+rowUp+" and y is "+columnUp);
-            //Used to move piece in swipes and tocuh up events
+
+            // If user click on or remove finger from highlighted piece., move the piece to position.
             if(!isGameOver && chessBoardSquares[rowUp][columnUp].isHighlighted()){
                 moveSelectedPieceToTouchUp();
             }
@@ -262,7 +276,7 @@ public class ChessBoardCustomView extends View {
         checkForPawnPromotion();
 
 
-
+        //Checking if game is over. 
         checkForGameOver();
 
         if(!isGameOver && commonUtils.isKingInCheck(chessBoardSquares,isWhiteTurn)){
@@ -288,6 +302,9 @@ public class ChessBoardCustomView extends View {
         return super.onTouchEvent(event);
     }
 
+
+
+    //Method that handles Pawn promotion
     private void checkForPawnPromotion() {
         if(commonUtils.isPawnInLastRank(chessBoardSquares)){
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -347,63 +364,32 @@ public class ChessBoardCustomView extends View {
         }
     }
 
+    //Method to check for checkmate..!!
     private void checkForGameOver() {
 
             if(commonUtils.isKingInCheck(chessBoardSquares,isWhiteTurn)){
-                isGameOver = checkForNoValidMove();
+                isGameOver = commonUtils.checkForNoValidMove(chessBoardSquares,isWhiteTurn);
                 return;
             }
-                isStaleMate = checkForNoValidMove();
+                isStaleMate = commonUtils.checkForNoValidMove(chessBoardSquares,isWhiteTurn);
         isNotEnoughMaterialsToCheckmate = commonUtils.checkForEnoughMaterials(chessBoardSquares);
     }
 
 
 
-    private boolean checkForNoValidMove() {
-
-
-
-        if(isWhiteTurn){
-        for(int i=0;i<8;i++){
-            for(int j=0;j<8;j++){
-                if(!chessBoardSquares[i][j].isEmpty() && chessBoardSquares[i][j].getPiece().isWhitePiece()){
-                    ArrayList<Point> validMovesList= chessBoardSquares[i][j].getPiece().getAllValidPositions(chessBoardSquares);
-                    if(validMovesList.size()>0)
-                        return false;
-                }
-            }
-        }
-        }
-            else{
-                for(int i=0;i<8;i++){
-                    for(int j=0;j<8;j++){
-                        if(!chessBoardSquares[i][j].isEmpty() && !chessBoardSquares[i][j].getPiece().isWhitePiece()){
-                            ArrayList<Point> validMovesList= chessBoardSquares[i][j].getPiece().getAllValidPositions(chessBoardSquares);
-                            if(validMovesList.size()>0)
-                                return false;
-                        }
-                    }
-                }
-            }
-
-        return true;
-    }
-
+    //Check if the user clicked on valid and highlighted position
     private void checkForValidPieceAndUnHighlight() {
-        if(chessBoardSquares[rowDown][columnDown].getPiece()!=null)
+        if(!chessBoardSquares[rowDown][columnDown].isEmpty())
         {
             if(!isTouchDownOnOpponentPiece() && chessBoardSquares[rowDown][columnDown].isHighlighted()) //Avoid unhighlighting if clicked on other pieces
             {
                 unhighlightSquares();
                 isHighlightedMode = false;
             }
-            else{
-            if(!isTouchDownOnOpponentPiece() )
-                Toast.makeText(getContext(),"Please click on valid square to make move or click on highlighted piece to unselect the piece..!!",Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
+    //See if user clicked on opponent piece
     private boolean isTouchDownOnOpponentPiece() {
         if(chessBoardSquares[rowDown][columnDown].getPiece().isWhitePiece() && isWhiteTurn){
             return false;
@@ -414,38 +400,29 @@ public class ChessBoardCustomView extends View {
         return true;
     }
 
-    private boolean isValidPieceForCurrentTurn(){
-        if(chessBoardSquares[rowDown][columnDown].getPiece()!=null){
-            if(chessBoardSquares[rowDown][columnDown].getPiece().isWhitePiece() && isWhiteTurn)
-            {
-                return true;
-            }
-            else if ((!chessBoardSquares[rowDown][columnDown].getPiece().isWhitePiece()) && !isWhiteTurn)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
+    //The method responsible for moving the piece to user selected square.
     private void moveSelectedPieceToTouchUp() {
-        //chessBoardLastMoveState = commonUtils.copyDataIntoBackupArray(chessBoardSquares);; //Keeping track of last state for undo..
+
         if(selectedPiecePosition.x !=rowUp || selectedPiecePosition.y !=columnUp) //Needed to check if user clicked on same position again
         {
         Piece piece = chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece();
         piece.setCurrentPosition(new Point(rowUp,columnUp));
+
+        //Special case for king. Check if king castled or moved. If castled, we've to move rook as well.
         if("wk".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId()) || "bk".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId()))
         {
             checkIfCastlingAndMoveRook(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId());
             revokeCastlingRight(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().isWhitePiece());
         }
 
-
+        //Special case for rook. Castling right for king on that side will be revoked.
         if("wr".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId()) || "br".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId()) )
         {
             revokeCastlingRightOneSide(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId());
         }
 
+        //Checking for enpassant.
         if("wp".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId())){
 
             //Check to enable enpassant
@@ -462,17 +439,18 @@ public class ChessBoardCustomView extends View {
                 }
             }
 
-            //Check for capturing
+            //Check for capturing the enpassant eligible piece.
             if(columnUp == 2 && chessBoardSquares[rowUp][columnUp].isEmpty() && !chessBoardSquares[rowUp][columnUp+1].isEmpty() && "bp".equals(chessBoardSquares[rowUp][columnUp+1].getPiece().getPieceId())){
                 chessBoardSquares[rowUp][columnUp+1].setPiece(null);
             }
 
         }
 
+            //Checking for enpassant.
         if("bp".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId())){
             if(columnUp == 3 && selectedPiecePosition.y ==1) //Check for two steps.
             {
-                //Check for black pawn in touchUp + 1 or - 1
+                //Check for white pawn in touchUp + 1 or - 1
                 if(rowUp!=7 && !chessBoardSquares[rowUp+1][3].isEmpty() && "wp".equals(chessBoardSquares[rowUp+1][3].getPiece().getPieceId())){
                     WhitePawn wp = (WhitePawn) chessBoardSquares[rowUp+1][3].getPiece();
                     wp.setEnPassantEligible(true, new Point(rowUp,2));
@@ -482,22 +460,25 @@ public class ChessBoardCustomView extends View {
                     wp.setEnPassantEligible(true, new Point(rowUp,2));
                 }
             }
-            //Check for capturing
+            //Check for capturing the enpassant eligible piece.
             if(columnUp == 5 && chessBoardSquares[rowUp][columnUp].isEmpty() && !chessBoardSquares[rowUp][columnUp-1].isEmpty() &&"wp".equals(chessBoardSquares[rowUp][columnUp-1].getPiece().getPieceId())){
                 chessBoardSquares[rowUp][columnUp-1].setPiece(null);
             }
         }
 
-            commonUtils.resetEnpassant(isWhiteTurn,chessBoardSquares);
+        //This is done to revoke enpassant right after movement.
+        commonUtils.resetEnpassant(isWhiteTurn,chessBoardSquares);
+        //Set the selected piece to the square
         chessBoardSquares[rowUp][columnUp].setPiece(piece);
-
-
+        //Remove from old position.
         chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].setPiece(null);
+        //Unhighlight all the squares and change the user turn.
         unhighlightChangeModeAndTurn();
         }
 
     }
 
+    //The method used to move the rook to square beside the king.
     private void checkIfCastlingAndMoveRook(String pieceId) {
         if("wk".equals(pieceId)){
             if(selectedPiecePosition.x == 4 && selectedPiecePosition.y ==7 ){
@@ -507,7 +488,7 @@ public class ChessBoardCustomView extends View {
                     chessBoardSquares[5][7].setPiece(piece);
                     chessBoardSquares[7][7].setPiece(null);
                 }
-                else if(rowUp == 2 && columnUp == 7){
+                else if(rowUp == 2 && columnUp == 7){ // Queen Side Castling
                     Piece piece = chessBoardSquares[0][7].getPiece();
                     piece.setCurrentPosition(new Point(3,7));
                     chessBoardSquares[3][7].setPiece(piece);
@@ -523,7 +504,7 @@ public class ChessBoardCustomView extends View {
                     chessBoardSquares[5][0].setPiece(piece);
                     chessBoardSquares[7][0].setPiece(null);
                 }
-                else if(rowUp == 2 && columnUp == 0){
+                else if(rowUp == 2 && columnUp == 0){ // Queen Side Castling
                     Piece piece = chessBoardSquares[0][0].getPiece();
                     piece.setCurrentPosition(new Point(3,0));
                     chessBoardSquares[3][0].setPiece(piece);
@@ -533,6 +514,7 @@ public class ChessBoardCustomView extends View {
         }
     }
 
+    //Will be called on rook movement.
     private void revokeCastlingRightOneSide(String pieceId) {
         if("wr".equals(pieceId)){
             if(selectedPiecePosition.x == 7 && selectedPiecePosition.y ==7)
@@ -541,7 +523,7 @@ public class ChessBoardCustomView extends View {
             }
             else if(selectedPiecePosition.x == 0 && selectedPiecePosition.y ==7)
             {
-                isWhiteQueengSideCastlingEligible = false;
+                isWhiteQueenSideCastlingEligible = false;
             }
         }
         else if ("br".equals(pieceId)){
@@ -551,22 +533,24 @@ public class ChessBoardCustomView extends View {
             }
             else if(selectedPiecePosition.x == 0 && selectedPiecePosition.y ==0)
             {
-                isBlackQueengSideCastlingEligible = false;
+                isBlackQueenSideCastlingEligible = false;
             }
         }
     }
 
+    //Will be called on king movement.
     private void revokeCastlingRight(boolean isWhiteKing) {
         if(isWhiteKing){
             isWhiteKingSideCastlingEligible = false;
-            isWhiteQueengSideCastlingEligible = false;
+            isWhiteQueenSideCastlingEligible = false;
         }
         else{
             isBlackKingSideCastlingEligible = false;
-            isBlackQueengSideCastlingEligible = false;
+            isBlackQueenSideCastlingEligible = false;
         }
     }
 
+    //Used to unhighlight all squares as well as change the turn.
     private void unhighlightChangeModeAndTurn() {
         for (int x = 0; x<8 ; x++){ //Loop to unhighlight every piece
             for(int y = 0; y<8 ; y++) {
@@ -577,9 +561,13 @@ public class ChessBoardCustomView extends View {
         setIsWhiteTurn(!isWhiteTurn);
     }
 
+    //On touch down of a piece., Set the highlights on square to
+    // indicate to user the possible moves.
     private void setHighlightForMoves(){
         selectedPiecePosition = new Point(rowDown,columnDown);
+        //Calling the super class method.
         Piece currentPiece = chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece();
+        //Java Magic works here., and gets the valid moves
         ArrayList<Point> allPossibleMoves = currentPiece.getAllValidPositions(chessBoardSquares);
         for(int i=0;i<allPossibleMoves.size();i++){
             Point point = allPossibleMoves.get(i);
@@ -591,6 +579,7 @@ public class ChessBoardCustomView extends View {
     }
 
 
+    //Method used to clear all the highlights set earlier
     private void unhighlightSquares() {
         for (int x = 0; x<8 ; x++){ //Loop for pawns
             for(int y = 0; y<8 ; y++) {
@@ -602,6 +591,9 @@ public class ChessBoardCustomView extends View {
     }
 
 
+
+
+    //Getters And Setters
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
@@ -615,6 +607,14 @@ public class ChessBoardCustomView extends View {
         {
             mainActivity.textView.setText("Black To Play");
         }
+    }
+
+    public ChessSquare[][] getChessBoardSquares() {
+        return chessBoardSquares;
+    }
+
+    public void setChessBoardSquares(ChessSquare[][] chessBoardSquares) {
+        this.chessBoardSquares = chessBoardSquares;
     }
 
 

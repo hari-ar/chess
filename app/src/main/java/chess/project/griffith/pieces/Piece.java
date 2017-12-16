@@ -16,9 +16,18 @@ public abstract class Piece {
 
 
 
+    //Method to check legal moves where piece can move to.!!
     public abstract ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares);
+
+    // Method to get the piece movements., But without check for self check. This is need to verify if opponent king can be checked.
+    // If above method is used., then it will miss a corner case where a piece in defence line of sight of same king can not check the opponent king,
+    // but that should not be the case in chess. Even though a piece is defending its own king and can not move., it can affect check for opponent king.
     public abstract ArrayList<Point> getAllPossiblePositions(ChessSquare[][] chessBoardSquares);
+
+    //Return drawable image.
     public abstract  Drawable getDrawable();
+
+    //Flag to set piece color.
     boolean isWhitePiece;
     private String pieceId;
 
@@ -34,14 +43,10 @@ public abstract class Piece {
     CommonUtils commonUtils = new CommonUtils();
 
 
-    public void setCurrentPosition(Point currentPosition) {
-        this.currentPosition = currentPosition;
 
-    }
-
+    //Filter invalid positions from all the possible moves.
     public ArrayList<Point> filterInvalidPositions(final ChessSquare[][] chessBoardSquares, ArrayList<Point> allPoints, final Piece selectedPiece){
         ChessSquare[][] testBoard = new ChessSquare[8][8];
-
         ArrayList<Point> verifiedValidPoints = new ArrayList();
         for(int i =0 ; i<allPoints.size() ; i++){
             for(int x=0; x<8;x++){
@@ -74,7 +79,12 @@ public abstract class Piece {
 
 
 
+    //Getters and Setter.
 
+    public void setCurrentPosition(Point currentPosition) {
+        this.currentPosition = currentPosition;
+
+    }
 
     public boolean isWhitePiece() {
         return isWhitePiece;

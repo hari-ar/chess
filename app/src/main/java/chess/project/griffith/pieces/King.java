@@ -43,7 +43,7 @@ public class King extends Piece {
             }
 
         }
-        if(isWhitePiece && ChessBoardCustomView.isWhiteQueengSideCastlingEligible){
+        if(isWhitePiece && ChessBoardCustomView.isWhiteQueenSideCastlingEligible){
             for(int i=0;i<returnedData.size();i++){
                 if(returnedData.get(i).x == 3 && returnedData.get(i).y == 7)
                 {
@@ -64,7 +64,7 @@ public class King extends Piece {
             }
 
         }
-        if(!isWhitePiece && ChessBoardCustomView.isBlackQueengSideCastlingEligible){
+        if(!isWhitePiece && ChessBoardCustomView.isBlackQueenSideCastlingEligible){
             for(int i=0;i<returnedData.size();i++){
                 if(returnedData.get(i).x == 3 && returnedData.get(i).y == 0)
                 {
