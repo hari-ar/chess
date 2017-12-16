@@ -17,7 +17,9 @@ public abstract class Piece {
 
 
     //Method to check legal moves where piece can move to.!!
-    public abstract ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares);
+    public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares){
+        return filterInvalidPositions(chessBoardSquares,getAllPossiblePositions(chessBoardSquares),this);
+    }
 
     // Method to get the piece movements., But without check for self check. This is need to verify if opponent king can be checked.
     // If above method is used., then it will miss a corner case where a piece in defence line of sight of same king can not check the opponent king,
@@ -31,13 +33,6 @@ public abstract class Piece {
     boolean isWhitePiece;
     private String pieceId;
 
-    public String getPieceId() {
-        return pieceId;
-    }
-
-    public void setPieceId(String pieceId) {
-        this.pieceId = pieceId;
-    }
 
     Point currentPosition;
     CommonUtils commonUtils = new CommonUtils();
@@ -90,5 +85,12 @@ public abstract class Piece {
         return isWhitePiece;
     }
 
+    public String getPieceId() {
+        return pieceId;
+    }
+
+    public void setPieceId(String pieceId) {
+        this.pieceId = pieceId;
+    }
 
 }

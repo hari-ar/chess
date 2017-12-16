@@ -30,10 +30,7 @@ public class WhitePawn extends Piece {
         setPieceId("wp");
     }
 
-    @Override
-    public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
-        return super.filterInvalidPositions(chessBoardSquares,getAllPossiblePositions(chessBoardSquares),this);
-    }
+
 
     @Override
     public ArrayList<Point> getAllPossiblePositions(ChessSquare[][] chessBoardSquares) {

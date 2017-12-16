@@ -84,8 +84,6 @@ public class ChessBoardCustomView extends View {
     }
     //Constructors Block Ends
 
-
-
     //Common method to be called by the constructor..!!
     //Gives consitent behaviour irrespective of how the view is initialized.
     public void init() {
@@ -276,7 +274,7 @@ public class ChessBoardCustomView extends View {
         checkForPawnPromotion();
 
 
-        //Checking if game is over. 
+        //Checking if game is over.
         checkForGameOver();
 
         if(!isGameOver && commonUtils.isKingInCheck(chessBoardSquares,isWhiteTurn)){
@@ -301,8 +299,6 @@ public class ChessBoardCustomView extends View {
         invalidate();
         return super.onTouchEvent(event);
     }
-
-
 
     //Method that handles Pawn promotion
     private void checkForPawnPromotion() {
@@ -375,8 +371,6 @@ public class ChessBoardCustomView extends View {
         isNotEnoughMaterialsToCheckmate = commonUtils.checkForEnoughMaterials(chessBoardSquares);
     }
 
-
-
     //Check if the user clicked on valid and highlighted position
     private void checkForValidPieceAndUnHighlight() {
         if(!chessBoardSquares[rowDown][columnDown].isEmpty())
@@ -399,7 +393,6 @@ public class ChessBoardCustomView extends View {
         }
         return true;
     }
-
 
     //The method responsible for moving the piece to user selected square.
     private void moveSelectedPieceToTouchUp() {
@@ -578,7 +571,6 @@ public class ChessBoardCustomView extends View {
         isHighlightedMode = true;
     }
 
-
     //Method used to clear all the highlights set earlier
     private void unhighlightSquares() {
         for (int x = 0; x<8 ; x++){ //Loop for pawns
@@ -589,8 +581,6 @@ public class ChessBoardCustomView extends View {
             }
         }
     }
-
-
 
 
     //Getters And Setters

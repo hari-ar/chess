@@ -26,10 +26,6 @@ public class Queen extends Piece {
             setPieceId("bq");
     }
 
-    @Override
-    public ArrayList<Point> getAllValidPositions(ChessSquare[][] chessBoardSquares) {
-        return super.filterInvalidPositions(chessBoardSquares,getAllPossiblePositions(chessBoardSquares),this);
-    }
 
 
     @Override
