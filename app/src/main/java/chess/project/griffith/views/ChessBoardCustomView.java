@@ -270,10 +270,15 @@ public class ChessBoardCustomView extends View {
 
         }
 
-        //Checking for piece promotion
+        checkForGameBoardConditions();
+        invalidate();
+        return super.onTouchEvent(event);
+    }
+
+    private void checkForGameBoardConditions() {
+
+        //Checking for pawn promotion
         checkForPawnPromotion();
-
-
         //Checking if game is over.
         checkForGameOver();
 
@@ -294,71 +299,71 @@ public class ChessBoardCustomView extends View {
         else if(isNotEnoughMaterialsToCheckmate){
             Toast.makeText(getContext(),"Its a Draw..!! Not enough materials to continue",Toast.LENGTH_SHORT).show();
         }
-
-
-        invalidate();
-        return super.onTouchEvent(event);
     }
 
     //Method that handles Pawn promotion
     private void checkForPawnPromotion() {
-        if(commonUtils.isPawnInLastRank(chessBoardSquares)){
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Congrats...!! Your pawn is promoted. Select a piece..!!");
-            final Point lastRankPawnPosition = commonUtils.getLastRankPawnPosition();
-
-            builder.setItems(R.array.choices, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int index) {
-                            if(chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].getPiece().isWhitePiece()){
-                                if(index == 0)
-                                {
-                                    chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Queen(getContext(),lastRankPawnPosition,true));
-                                }
-                                else if(index == 1)
-                                {
-                                    chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Rook(getContext(),lastRankPawnPosition,true));
-                                }
-                                else if(index == 2)
-                                {
-                                    chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Bishop(getContext(),lastRankPawnPosition,true));
-                                }
-                                else if (index == 3){
-                                    chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Knight(getContext(),lastRankPawnPosition,true));
-                                }
-                                if(commonUtils.isKingInCheck(chessBoardSquares,isWhiteTurn)){ //Added to avoid bug which doesn't alert check on pawn promotion
-                                    Toast.makeText(getContext(),"Check..!!!!",Toast.LENGTH_SHORT).show();
-                                }
-                                invalidate();
-                            }
-                            else{
-                                if(index == 0)
-                                {
-                                    chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Queen(getContext(),lastRankPawnPosition,false));
-                                }
-                                else if(index == 1)
-                                {
-                                    chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Rook(getContext(),lastRankPawnPosition,false));
-                                }
-                                else if(index == 2)
-                                {
-                                    chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Bishop(getContext(),lastRankPawnPosition,false));
-                                }
-                                else if (index == 3){
-                                    chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Knight(getContext(),lastRankPawnPosition,false));
-                                }
-                                if(commonUtils.isKingInCheck(chessBoardSquares,isWhiteTurn)){ //Added to avoid bug which doesn't alert check on pawn promotion
-                                    Toast.makeText(getContext(),"Check..!!!!",Toast.LENGTH_SHORT).show();
-                                }
-                                invalidate();
-                            }
-                        }
-                    }
-            );
-            AlertDialog dialog = builder.create();
-            dialog.show();
+        if(commonUtils.isPawnInLastRank(chessBoardSquares)) {
+            executePawnPromotion(commonUtils.getLastRankPawnPosition());
         }
     }
+
+    private void executePawnPromotion(final Point lastRankPawnPosition) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Congrats...!! Your pawn is promoted. Select a piece..!!");
+        builder.setItems(R.array.choices, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int index) {
+                        if(chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].getPiece().isWhitePiece()){
+                            if(index == 0)
+                            {
+                                chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Queen(getContext(),lastRankPawnPosition,true));
+                            }
+                            else if(index == 1)
+                            {
+                                chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Rook(getContext(),lastRankPawnPosition,true));
+                            }
+                            else if(index == 2)
+                            {
+                                chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Bishop(getContext(),lastRankPawnPosition,true));
+                            }
+                            else if (index == 3){
+                                chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Knight(getContext(),lastRankPawnPosition,true));
+                            }
+
+                            if(commonUtils.isKingInCheck(chessBoardSquares,isWhiteTurn)){ //Added to avoid bug which doesn't alert check on pawn promotion
+                                Toast.makeText(getContext(),"Check..!!!!",Toast.LENGTH_SHORT).show();
+                            }
+                            invalidate();
+                        }
+                        else{
+                            if(index == 0)
+                            {
+                                chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Queen(getContext(),lastRankPawnPosition,false));
+                            }
+                            else if(index == 1)
+                            {
+                                chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Rook(getContext(),lastRankPawnPosition,false));
+                            }
+                            else if(index == 2)
+                            {
+                                chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Bishop(getContext(),lastRankPawnPosition,false));
+                            }
+                            else if (index == 3){
+                                chessBoardSquares[lastRankPawnPosition.x][lastRankPawnPosition.y].setPiece(new Knight(getContext(),lastRankPawnPosition,false));
+                            }
+                            if(commonUtils.isKingInCheck(chessBoardSquares,isWhiteTurn)){ //Added to avoid bug which doesn't alert check on pawn promotion
+                                Toast.makeText(getContext(),"Check..!!!!",Toast.LENGTH_SHORT).show();
+                            }
+                            invalidate();
+                        }
+                    }
+                }
+        );
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 
     //Method to check for checkmate..!!
     private void checkForGameOver() {
@@ -368,7 +373,7 @@ public class ChessBoardCustomView extends View {
                 return;
             }
                 isStaleMate = commonUtils.checkForNoValidMove(chessBoardSquares,isWhiteTurn);
-        isNotEnoughMaterialsToCheckmate = commonUtils.checkForEnoughMaterials(chessBoardSquares);
+            isNotEnoughMaterialsToCheckmate = commonUtils.checkForEnoughMaterials(chessBoardSquares);
     }
 
     //Check if the user clicked on valid and highlighted position
@@ -377,7 +382,13 @@ public class ChessBoardCustomView extends View {
         {
             if(!isTouchDownOnOpponentPiece() && chessBoardSquares[rowDown][columnDown].isHighlighted()) //Avoid unhighlighting if clicked on other pieces
             {
-                unhighlightSquares();
+                for (int x = 0; x<8 ; x++){ //Loop for pawns
+                    for(int y = 0; y<8 ; y++) {
+                        chessBoardSquares[x][y].setHighlighted(false);
+                        //isWhiteTurn=!isWhiteTurn;
+                        isHighlightedMode=false;
+                    }
+                }
                 isHighlightedMode = false;
             }
         }
@@ -402,19 +413,21 @@ public class ChessBoardCustomView extends View {
         Piece piece = chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece();
         piece.setCurrentPosition(new Point(rowUp,columnUp));
 
-        //Special case for king. Check if king castled or moved. If castled, we've to move rook as well.
-        if("wk".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId()) || "bk".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId()))
-        {
-            checkIfCastlingAndMoveRook(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId());
-            revokeCastlingRight(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().isWhitePiece());
+        //Created methods to be used for special features.
+        handleCastlingMovement();
+        handleEnpassantMovement();
+
+        //Set the selected piece to the square
+        chessBoardSquares[rowUp][columnUp].setPiece(piece);
+        //Remove from old position.
+        chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].setPiece(null);
+        //Unhighlight all the squares and change the user turn.
+        unhighlightChangeModeAndTurn();
         }
 
-        //Special case for rook. Castling right for king on that side will be revoked.
-        if("wr".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId()) || "br".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId()) )
-        {
-            revokeCastlingRightOneSide(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId());
-        }
+    }
 
+    private void handleEnpassantMovement() {
         //Checking for enpassant.
         if("wp".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId())){
 
@@ -439,7 +452,7 @@ public class ChessBoardCustomView extends View {
 
         }
 
-            //Checking for enpassant.
+        //Checking for enpassant.
         if("bp".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId())){
             if(columnUp == 3 && selectedPiecePosition.y ==1) //Check for two steps.
             {
@@ -461,14 +474,21 @@ public class ChessBoardCustomView extends View {
 
         //This is done to revoke enpassant right after movement.
         commonUtils.resetEnpassant(isWhiteTurn,chessBoardSquares);
-        //Set the selected piece to the square
-        chessBoardSquares[rowUp][columnUp].setPiece(piece);
-        //Remove from old position.
-        chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].setPiece(null);
-        //Unhighlight all the squares and change the user turn.
-        unhighlightChangeModeAndTurn();
+    }
+
+    private void handleCastlingMovement() {
+        //Special case for king. Check if king castled or moved. If castled, we've to move rook as well.
+        if("wk".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId()) || "bk".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId()))
+        {
+            checkIfCastlingAndMoveRook(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId());
+            revokeCastlingRight(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().isWhitePiece());
         }
 
+        //Special case for rook. Castling right for king on that side will be revoked.
+        if("wr".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId()) || "br".equals(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId()) )
+        {
+            revokeCastlingRightOneSide(chessBoardSquares[selectedPiecePosition.x][selectedPiecePosition.y].getPiece().getPieceId());
+        }
     }
 
     //The method used to move the rook to square beside the king.
@@ -571,16 +591,7 @@ public class ChessBoardCustomView extends View {
         isHighlightedMode = true;
     }
 
-    //Method used to clear all the highlights set earlier
-    private void unhighlightSquares() {
-        for (int x = 0; x<8 ; x++){ //Loop for pawns
-            for(int y = 0; y<8 ; y++) {
-                chessBoardSquares[x][y].setHighlighted(false);
-                //isWhiteTurn=!isWhiteTurn;
-                isHighlightedMode=false;
-            }
-        }
-    }
+
 
 
     //Getters And Setters
